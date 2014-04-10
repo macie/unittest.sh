@@ -436,7 +436,7 @@ unittest::start() {
   # Runs instruction before all tests.
   #
   # Globals:
-  #     start_time (str) - Start time of tests (in nanoseconds).
+  #     start_time (str) - Start time of tests (in seconds).
   #
   # Arguments:
   #     None.
@@ -444,7 +444,7 @@ unittest::start() {
   # Returns:
   #     None.
   #
-  _start_time="$(date +%s%N)"  # in nanoseconds
+  _start_time="$(date +%s.%3N)"  # in seconds
 }
 
 unittest::stop() {
@@ -462,7 +462,15 @@ unittest::stop() {
   #     None.
   #
   local end_status=""
-  local teststime=$(($(date +%s%N) - ${_start_time}))
+  local end_time="$(date +%s.%3N)"
+  local runtime_milisec=$(( ${end_time#*.} - ${_start_time#*.} )) # ms
+  local runtime_sec=$(( ${end_time%.*} - ${_start_time%.*} ))  # seconds
+
+  if [[ ${runtime_milisec} < 0 ]]; then
+    runtime_milisec=$(( 1000 - ${runtime_milisec} ))
+    runtime_sec=$(( ${runtime_sec} - 1 ))
+  fi
+
 
   if (( ${_tests_failed} > 0 )); then
     printf "${_fail_messages}"
@@ -473,7 +481,7 @@ unittest::stop() {
 
   printf "
 ----------------------------------------------------------------------
-Ran ${_tests_run} tests in ${teststime}s
+Ran ${_tests_run} tests in ${runtime_sec}.$(printf "%03i" ${runtime_milisec})s
 
 ${end_status}
 "
