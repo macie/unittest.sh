@@ -355,7 +355,7 @@ unittest::parse_args() {
   # Returns:
   #     String message or nothing.
   #
-  while [[ "$1" == "-*" ]]; do
+  while [[ $1 == -* ]]; do
     case "$1" in
       -h|--help|-\?)
         unittest::help_message
@@ -379,17 +379,17 @@ unittest::parse_args() {
 
       -v|--verbose)
         _verbosity=2
-        shift 2
+        shift 1
         ;;
 
       -q|--quiet)
         _verbosity=0
-        shift 2
+        shift 1
         ;;
 
       --with-coverage)
         _coverage=1
-        shift 2
+        shift 1
         ;;
 
       --cover-dir)
