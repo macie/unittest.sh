@@ -190,12 +190,10 @@ assertEqual() {
   local result="$1"
   local expected="$2"
 
-  (( _tests_run++ ))
   if [[ "${result}" = "${expected}" ]]; then
     unittest::pass_indicator
     return 0
   else
-    (( _tests_failed++ ))
     unittest::fail_indicator
     unittest::create_fail_message
     return 1
@@ -207,12 +205,10 @@ assertNotEqual() {
   local result="$1"
   local expected="$2"
 
-  (( _tests_run++ ))
   if [[ "${result}" != "${expected}" ]]; then
     unittest::pass_indicator
     return 0
   else
-    (( _tests_failed++ ))
     unittest::fail_indicator
     unittest::create_fail_message
     return 1
@@ -224,12 +220,10 @@ assertTrue() {
   # assert::true ""  => fail
   local result="$1"
 
-  (( _tests_run++ ))
   if ([ "${result}" != "0" ]) && ([ "${result}" ]); then
     unittest::pass_indicator
     return 0
   else
-    (( _tests_failed++ ))
     unittest::fail_indicator
     unittest::create_fail_message
     return 1
@@ -241,12 +235,10 @@ assertFalse() {
   # assert::false ""  => pass
   local result="$1"
 
-  (( _tests_run++ ))
   if ([ "${result}" = "0" ]) || ([ ! "${result}" ]); then
     unittest::pass_indicator
     return 0
   else
-    (( _tests_failed++ ))
     unittest::fail_indicator
     unittest::create_fail_message
     return 1
@@ -258,12 +250,10 @@ assertRaises() {
   local result="$1"
   local expected="$2"
 
-  (( _tests_run++ ))
   if [[ "${result}" = "${expected}" ]]; then
     unittest::pass_indicator
     return 0
   else
-    (( _tests_failed++ ))
     unittest::fail_indicator
     unittest::create_fail_message
     return 1
@@ -274,12 +264,10 @@ assertGreater() {
   local result=$1
   local expected=$2
 
-  (( _tests_run++ ))
   if (( ${result} > ${expected} )); then
     unittest::pass_indicator
     return 0
   else
-    (( _tests_failed++ ))
     unittest::fail_indicator
     unittest::create_fail_message
     return 1
@@ -290,12 +278,10 @@ assertGreaterEqual() {
   local result=$1
   local expected=$2
 
-  (( _tests_run++ ))
   if (( ${result} >= ${expected} )); then
     unittest::pass_indicator
     return 0
   else
-    (( _tests_failed++ ))
     unittest::fail_indicator
     unittest::create_fail_message
     return 1
@@ -306,12 +292,10 @@ assertLess() {
   local result=$1
   local expected=$2
 
-  (( _tests_run++ ))
   if (( ${result} < ${expected} )); then
     unittest::pass_indicator
     return 0
   else
-    (( _tests_failed++ ))
     unittest::fail_indicator
     unittest::create_fail_message
     return 1
@@ -322,12 +306,10 @@ assertLessEqual() {
   local result=$1
   local expected=$2
 
-  (( _tests_run++ ))
   if (( ${result} <= ${expected} )); then
     unittest::pass_indicator
     return 0
   else
-    (( _tests_failed++ ))
     unittest::fail_indicator
     unittest::create_fail_message
     return 1
@@ -545,11 +527,18 @@ unittest::testrunner() {
     local test_suite=$(grep -o "test_[^\(]*" ${testfile})
 
     for test_case in ${test_suite}; do
+      (( _tests_run++ ))
 
       _current_testcase="${test_case}"
       unittest::before_test
       ${setup}
+
       ${test_case}
+      if [[ $? = 1 ]]; then
+        # TODO: needed test for 2 diferent return codes from one test function
+        (( _tests_failed++ ))
+      fi
+
       ${teardown}
       unittest::after_test
 
