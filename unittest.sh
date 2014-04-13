@@ -24,6 +24,7 @@ _test_files=''
 _tests_run=0
 _tests_failed=0
 _fail_messages=''
+_tests_starttime=''
 _current_testcase=''
 _current_testsuite=''
 
@@ -418,7 +419,7 @@ unittest::start() {
   # Runs instruction before all tests.
   #
   # Globals:
-  #     start_time (str) - Start time of tests (in seconds).
+  #     _tests_starttime (str) - Start time of tests (in nanoseconds).
   #
   # Arguments:
   #     None.
@@ -426,7 +427,7 @@ unittest::start() {
   # Returns:
   #     None.
   #
-  _start_time="$(date +%s.%3N)"  # in seconds
+  _tests_starttime="$(date +%s%N)"  # nanoseconds_since_epoch
 }
 
 unittest::stop() {
@@ -434,7 +435,7 @@ unittest::stop() {
   # Runs instruction after all tests.
   #
   # Globals:
-  #     _start_time (str) - Start time of tests (in nanoseconds).
+  #     _tests_starttime (str) - Start time of tests (in nanoseconds).
   #     _tests_run (str) - Number of tests.
   #
   # Arguments:
@@ -444,15 +445,13 @@ unittest::stop() {
   #     None.
   #
   local end_status=""
-  local end_time="$(date +%s.%3N)"
-  local runtime_milisec=$(( ${end_time#*.} - ${_start_time#*.} )) # ms
-  local runtime_sec=$(( ${end_time%.*} - ${_start_time%.*} ))  # seconds
+  local tests_endtime="$(date +%s%N)"    # nanoseconds_since_epoch
+  # required visible decimal place for seconds (leading zeros if needed)
+  local tests_time="$( \
+    printf "%010d" "$(( ${tests_endtime} - ${_tests_starttime} ))")"
 
-  if [[ ${runtime_milisec} < 0 ]]; then
-    runtime_milisec=$(( 1000 - ${runtime_milisec} ))
-    runtime_sec=$(( ${runtime_sec} - 1 ))
-  fi
-
+  # in format: seconds.microseconds (eg. 0.012)
+  tests_time="${tests_time:0:${#tests_time}-9}.${tests_time:${#tests_time}-9:${#tests_time}-7}"
 
   if (( ${_tests_failed} > 0 )); then
     printf "${_fail_messages}"
@@ -463,7 +462,7 @@ unittest::stop() {
 
   printf "
 ----------------------------------------------------------------------
-Ran ${_tests_run} tests in ${runtime_sec}.$(printf "%03i" ${runtime_milisec})s
+Ran ${_tests_run} tests in ${tests_time}s
 
 ${end_status}
 "
