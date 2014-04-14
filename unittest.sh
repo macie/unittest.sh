@@ -408,7 +408,7 @@ ut__autodiscovery() {
   #     testfiles (str) - Files with tests.
   #
   if [[ "${_test_dir}" == '' ]]; then
-    _test_dir=$(find $(pwd)/ -type d | grep -m 1 -E '/tests(/.*)?$')
+    _test_dir=$(find $(pwd)/ -regex '.*/tests' -print -quit)
   fi
 
   _test_files="$(find "${_test_dir}" -name "test_*.sh")"
