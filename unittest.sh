@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # unittest.sh - unit tests framework for shell scripts.
 #
@@ -33,7 +33,7 @@ _current_testsuite=''
 #   MESSAGES
 #
 
-unittest::help_message() {
+ut__help_message() {
   #
   # Shows help message.
   #
@@ -61,7 +61,7 @@ unittest::help_message() {
   echo '                                  selected directory.'
 }
 
-unittest::version_message() {
+ut__version_message() {
   #
   # Shows version message.
   #
@@ -80,7 +80,7 @@ unittest::version_message() {
   echo 'MIT License (http://opensource.org/licenses/MIT)'
 }
 
-unittest::error_message() {
+ut__error_message() {
   #
   # Shows error message.
   #
@@ -99,7 +99,7 @@ unittest::error_message() {
   echo "Error: ${msg}." 1>&2
 }
 
-unittest::create_fail_message() {
+ut__create_fail_message() {
   #
   # Creates fail message.
   #
@@ -122,7 +122,7 @@ unittest::create_fail_message() {
  ")"
 }
 
-unittest::fail_indicator() {
+ut__fail_indicator() {
   #
   # Fail indicator.
   #
@@ -142,7 +142,7 @@ unittest::fail_indicator() {
   fi
 }
 
-unittest::pass_indicator() {
+ut__pass_indicator() {
   #
   # Pass indicator.
   #
@@ -162,7 +162,7 @@ unittest::pass_indicator() {
   fi
 }
 
-unittest::testcase_indicator() {
+ut__testcase_indicator() {
   #
   # Pass indicator.
   #
@@ -187,76 +187,76 @@ unittest::testcase_indicator() {
 #
 
 assertEqual() {
-  # assert::equal 0 0  => pass
+  # assertEqual 0 0  => pass
   local result="$1"
   local expected="$2"
 
   if [[ "${result}" = "${expected}" ]]; then
-    unittest::pass_indicator
+    ut__pass_indicator
     return 0
   else
-    unittest::fail_indicator
-    unittest::create_fail_message
+    ut__fail_indicator
+    ut__create_fail_message
     return 1
   fi
 }
 
 assertNotEqual() {
-  # assert::not_equal 0 1  => pass
+  # assertNotEqual 0 1  => pass
   local result="$1"
   local expected="$2"
 
   if [[ "${result}" != "${expected}" ]]; then
-    unittest::pass_indicator
+    ut__pass_indicator
     return 0
   else
-    unittest::fail_indicator
-    unittest::create_fail_message
+    ut__fail_indicator
+    ut__create_fail_message
     return 1
   fi
 }
 
 assertTrue() {
-  # assert::true 1  => pass
-  # assert::true ""  => fail
+  # assertTrue 1  => pass
+  # assertTrue ""  => fail
   local result="$1"
 
   if ([ "${result}" != "0" ]) && ([ "${result}" ]); then
-    unittest::pass_indicator
+    ut__pass_indicator
     return 0
   else
-    unittest::fail_indicator
-    unittest::create_fail_message
+    ut__fail_indicator
+    ut__create_fail_message
     return 1
   fi
 }
 
 assertFalse() {
-  # assert::false 0  => pass
-  # assert::false ""  => pass
+  # assertFalse 0  => pass
+  # assertFalse ""  => pass
   local result="$1"
 
   if ([ "${result}" = "0" ]) || ([ ! "${result}" ]); then
-    unittest::pass_indicator
+    ut__pass_indicator
     return 0
   else
-    unittest::fail_indicator
-    unittest::create_fail_message
+    ut__fail_indicator
+    ut__create_fail_message
     return 1
   fi
 }
 
 assertRaises() {
-  # assert:raises function 0
+  # assertRaises function 1
   local result="$1"
   local expected="$2"
 
   if [[ "${result}" = "${expected}" ]]; then
-    unittest::pass_indicator
+    ut__pass_indicator
     return 0
   else
-    unittest::fail_indicator
-    unittest::create_fail_message
+    ut__fail_indicator
+    ut__create_fail_message
     return 1
   fi
 }
@@ -266,11 +266,11 @@ assertGreater() {
   local expected=$2
 
   if (( ${result} > ${expected} )); then
-    unittest::pass_indicator
+    ut__pass_indicator
     return 0
   else
-    unittest::fail_indicator
-    unittest::create_fail_message
+    ut__fail_indicator
+    ut__create_fail_message
     return 1
   fi
 }
@@ -280,11 +280,11 @@ assertGreaterEqual() {
   local expected=$2
 
   if (( ${result} >= ${expected} )); then
-    unittest::pass_indicator
+    ut__pass_indicator
     return 0
   else
-    unittest::fail_indicator
-    unittest::create_fail_message
+    ut__fail_indicator
+    ut__create_fail_message
     return 1
   fi
 }
@@ -294,11 +294,11 @@ assertLess() {
   local expected=$2
 
   if (( ${result} < ${expected} )); then
-    unittest::pass_indicator
+    ut__pass_indicator
     return 0
   else
-    unittest::fail_indicator
-    unittest::create_fail_message
+    ut__fail_indicator
+    ut__create_fail_message
     return 1
   fi
 }
@@ -308,11 +308,11 @@ assertLessEqual() {
   local expected=$2
 
   if (( ${result} <= ${expected} )); then
-    unittest::pass_indicator
+    ut__pass_indicator
     return 0
   else
-    unittest::fail_indicator
-    unittest::create_fail_message
+    ut__fail_indicator
+    ut__create_fail_message
     return 1
   fi
 }
@@ -322,7 +322,7 @@ assertLessEqual() {
 #   FUNCTIONS
 #
 
-unittest::parse_args() {
+ut__parse_args() {
   #
   # Parses script parameters.
   #
@@ -341,7 +341,7 @@ unittest::parse_args() {
   while [[ $1 == -* ]]; do
     case "$1" in
       -h|--help|-\?)
-        unittest::help_message
+        ut__help_message
         exit 0
         ;;
 
@@ -350,13 +350,13 @@ unittest::parse_args() {
           _test_dir="$2"
           shift 2
         else
-          unittest::error_message msg='no directory specified'
+          ut__error_message msg='no directory specified'
           exit 1
         fi
         ;;
 
       -V|--version|-\?)
-        unittest::version_message
+        ut__version_message
         exit 0
         ;;
 
@@ -380,21 +380,21 @@ unittest::parse_args() {
           _cover_dir="$2"
           shift 2
         else
-          unittest::error_message msg='no directory specified
+          ut__error_message msg='no directory specified
                                        or no coverage support enabled'
           exit 1
         fi
         ;;
 
       -*)
-        unittest::error_message msg="invalid option: $1"
+        ut__error_message msg="invalid option: $1"
         exit 1
         ;;
     esac
   done
 }
 
-unittest::autodiscovery() {
+ut__autodiscovery() {
   #
   # Finds directories with tests.
   #
@@ -414,7 +414,7 @@ unittest::autodiscovery() {
   _test_files="$(find "${_test_dir}" -name "test_*.sh")"
 }
 
-unittest::start() {
+ut__start() {
   #
   # Runs instruction before all tests.
   #
@@ -430,7 +430,7 @@ unittest::start() {
   _tests_starttime="$(date +%s%N)"  # nanoseconds_since_epoch
 }
 
-unittest::stop() {
+ut__stop() {
   #
   # Runs instruction after all tests.
   #
@@ -468,7 +468,7 @@ ${end_status}
 "
 }
 
-unittest::before_test() {
+ut__before_test() {
   #
   # Runs instruction before each test function.
   #
@@ -481,10 +481,10 @@ unittest::before_test() {
   # Returns:
   #     None.
   #
-  unittest::testcase_indicator
+  ut__testcase_indicator
 }
 
-unittest::after_test() {
+ut__after_test() {
   #
   # Runs instruction after each test function.
   #
@@ -500,7 +500,7 @@ unittest::after_test() {
   return 0
 }
 
-unittest::testrunner() {
+ut__testrunner() {
   #
   # Runs tests.
   #
@@ -514,7 +514,7 @@ unittest::testrunner() {
   #     None.
   #
 
-  unittest::start
+  ut__start
 
   for testfile in ${_test_files}; do
 
@@ -529,7 +529,7 @@ unittest::testrunner() {
       (( _tests_run++ ))
 
       _current_testcase="${test_case}"
-      unittest::before_test
+      ut__before_test
       ${setup}
 
       ${test_case}
@@ -539,7 +539,7 @@ unittest::testrunner() {
       fi
 
       ${teardown}
-      unittest::after_test
+      ut__after_test
 
       # reset test_case
       unset -f ${test_case}
@@ -549,7 +549,7 @@ unittest::testrunner() {
     unset -v ${setup} ${teardown}
   done
 
-  unittest::stop
+  ut__stop
 }
 
 
@@ -557,12 +557,12 @@ unittest::testrunner() {
 #   MAIN ROUTINE
 #
 
-unittest::main () {
-  unittest::parse_args "$@"
-  unittest::autodiscovery
-  unittest::testrunner
+ut__main () {
+  ut__parse_args "$@"
+  ut__autodiscovery
+  ut__testrunner
 
   exit 0
 }
 
-unittest::main "$@"
+ut__main "$@"
