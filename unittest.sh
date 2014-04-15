@@ -21,6 +21,7 @@ _verbosity=1  # normal verbosity
 _test_dir=''
 _test_files=''
 
+_assert_failed=0
 _tests_run=0
 _tests_failed=0
 _fail_messages=''
@@ -104,6 +105,7 @@ ut__create_fail_message() {
   # Creates fail message.
   #
   # Globals:
+  #     _assert_failed (int) - Flag shows if assert is failed.
   #     _current_testcase (str) - 
   #     _current_testsuite (str) - 
   #     _fail_messages (str) - 
@@ -114,12 +116,15 @@ ut__create_fail_message() {
   # Returns:
   #     None.
   #
-  _fail_messages="${_fail_messages}$(printf "
+  if [[ ${_assert_failed} = 0 ]]; then
+    _fail_messages="${_fail_messages}$(printf "
 ======================================================================
  FAIL: ${_current_testcase} (${_current_testsuite})
 ----------------------------------------------------------------------
  
  ")"
+    _assert_failed=1
+  fi
 }
 
 ut__fail_indicator() {
@@ -135,10 +140,10 @@ ut__fail_indicator() {
   # Returns:
   #     None.
   #
-  if [[ ${_verbosity} == 1 ]]; then
-    echo -n 'E'
-  elif [[ ${_verbosity} == 2 ]]; then
-    echo 'error'
+  if [[ ${_verbosity} = 1 ]]; then
+    echo -n 'F'
+  elif [[ ${_verbosity} = 2 ]]; then
+    echo 'FAIL'
   fi
 }
 
@@ -192,10 +197,8 @@ assertEqual() {
   local expected="$2"
 
   if [[ "${result}" = "${expected}" ]]; then
-    ut__pass_indicator
     return 0
   else
-    ut__fail_indicator
     ut__create_fail_message
     return 1
   fi
@@ -207,10 +210,8 @@ assertNotEqual() {
   local expected="$2"
 
   if [[ "${result}" != "${expected}" ]]; then
-    ut__pass_indicator
     return 0
   else
-    ut__fail_indicator
     ut__create_fail_message
     return 1
   fi
@@ -222,10 +223,8 @@ assertTrue() {
   local result="$1"
 
   if ([ "${result}" != "0" ]) && ([ "${result}" ]); then
-    ut__pass_indicator
     return 0
   else
-    ut__fail_indicator
     ut__create_fail_message
     return 1
   fi
@@ -237,10 +236,8 @@ assertFalse() {
   local result="$1"
 
   if ([ "${result}" = "0" ]) || ([ ! "${result}" ]); then
-    ut__pass_indicator
     return 0
   else
-    ut__fail_indicator
     ut__create_fail_message
     return 1
   fi
@@ -252,10 +249,8 @@ assertRaises() {
   local expected="$2"
 
   if [[ "${result}" = "${expected}" ]]; then
-    ut__pass_indicator
     return 0
   else
-    ut__fail_indicator
     ut__create_fail_message
     return 1
   fi
@@ -266,10 +261,8 @@ assertGreater() {
   local expected=$2
 
   if (( ${result} > ${expected} )); then
-    ut__pass_indicator
     return 0
   else
-    ut__fail_indicator
     ut__create_fail_message
     return 1
   fi
@@ -280,10 +273,8 @@ assertGreaterEqual() {
   local expected=$2
 
   if (( ${result} >= ${expected} )); then
-    ut__pass_indicator
     return 0
   else
-    ut__fail_indicator
     ut__create_fail_message
     return 1
   fi
@@ -294,10 +285,8 @@ assertLess() {
   local expected=$2
 
   if (( ${result} < ${expected} )); then
-    ut__pass_indicator
     return 0
   else
-    ut__fail_indicator
     ut__create_fail_message
     return 1
   fi
@@ -308,10 +297,8 @@ assertLessEqual() {
   local expected=$2
 
   if (( ${result} <= ${expected} )); then
-    ut__pass_indicator
     return 0
   else
-    ut__fail_indicator
     ut__create_fail_message
     return 1
   fi
@@ -436,7 +423,8 @@ ut__stop() {
   #
   # Globals:
   #     _tests_starttime (str) - Start time of tests (in nanoseconds).
-  #     _tests_run (str) - Number of tests.
+  #     _tests_run (int) - Number of tests.
+  #     _tests_failed (int) - Number of failed tests.
   #
   # Arguments:
   #     None.
@@ -473,7 +461,7 @@ ut__before_test() {
   # Runs instruction before each test function.
   #
   # Globals:
-  #     None.
+  #     _assert_failed (int) - Flag shows if assert is failed.
   #
   # Arguments:
   #     None.
@@ -481,6 +469,8 @@ ut__before_test() {
   # Returns:
   #     None.
   #
+  _assert_failed=0
+
   ut__testcase_indicator
 }
 
@@ -489,7 +479,9 @@ ut__after_test() {
   # Runs instruction after each test function.
   #
   # Globals:
-  #     _verbosity (int) - Verbosity level.
+  #     _assert_failed (int) - Flag shows if assert is failed.
+  #     _tests_failed (int) - Number of failed tests.
+  #     _tests_run (int) - Number of tests.
   #
   # Arguments:
   #     None.
@@ -497,7 +489,14 @@ ut__after_test() {
   # Returns:
   #     None.
   #
-  return 0
+  (( _tests_run++ ))
+
+  if [[ ${_assert_failed} = 1 ]]; then
+    ut__fail_indicator
+    (( _tests_failed++ ))
+  else
+    ut__pass_indicator
+  fi
 }
 
 ut__testrunner() {
@@ -526,17 +525,12 @@ ut__testrunner() {
     local test_suite=$(grep -o "test_[^\(]*" ${testfile})
 
     for test_case in ${test_suite}; do
-      (( _tests_run++ ))
 
       _current_testcase="${test_case}"
       ut__before_test
       ${setup}
 
       ${test_case}
-      if [[ $? = 1 ]]; then
-        # TODO: needed test for 2 diferent return codes from one test function
-        (( _tests_failed++ ))
-      fi
 
       ${teardown}
       ut__after_test
