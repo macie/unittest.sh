@@ -330,7 +330,7 @@ ut__parse_args() {
       -h|--help|-\?)
         ut__help_message
         exit 0
-        ;;
+      ;;
 
       -w|--where)
         if (($# > 1)); then
@@ -338,45 +338,47 @@ ut__parse_args() {
           shift 2
         else
           ut__error_message msg='no directory specified'
-          exit 1
+          exit 64  # command line usage error (via /usr/include/sysexits.h)
         fi
-        ;;
+      ;;
 
       -V|--version|-\?)
         ut__version_message
         exit 0
-        ;;
+      ;;
 
       -v|--verbose)
         _verbosity=2
         shift 1
-        ;;
+      ;;
 
       -q|--quiet)
         _verbosity=0
         shift 1
-        ;;
+      ;;
 
       --with-coverage)
         _coverage=1
         shift 1
-        ;;
+      ;;
 
       --cover-dir)
         if [[ $# > 1 ]] && [[ ${_coverage} == 1 ]]; then
           _cover_dir="$2"
           shift 2
+        elif [[ ${_coverage} = 0 ]]
+          ut__error_message msg='no coverage support enabled'
+          exit 78  # configuration error (via /usr/include/sysexits.h)
         else
-          ut__error_message msg='no directory specified
-                                       or no coverage support enabled'
-          exit 1
+          ut__error_message msg='no directory specified'
+          exit 64  # command line usage error (via /usr/include/sysexits.h)
         fi
-        ;;
+      ;;
 
       -*)
         ut__error_message msg="invalid option: $1"
-        exit 1
-        ;;
+        exit 64  # command line usage error (via /usr/include/sysexits.h)
+      ;;
     esac
   done
 }
