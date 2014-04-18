@@ -106,8 +106,8 @@ ut__create_fail_message() {
   #
   # Globals:
   #     _assert_failed (int) - Flag shows if assert is failed.
-  #     _current_testcase (str) - 
-  #     _current_testsuite (str) - 
+  #     _current_testcase (str) - Current test case name.
+  #     _current_testsuite (str) - Current test suite name.
   #     _fail_messages (str) - 
   #
   # Arguments:
@@ -160,9 +160,9 @@ ut__pass_indicator() {
   # Returns:
   #     None.
   #
-  if [[ ${_verbosity} == 1 ]]; then
+  if [[ ${_verbosity} = 1 ]]; then
     echo -n '.'
-  elif [[ ${_verbosity} == 2 ]]; then
+  elif [[ ${_verbosity} = 2 ]]; then
     echo 'ok'
   fi
 }
@@ -172,8 +172,8 @@ ut__testcase_indicator() {
   # Pass indicator.
   #
   # Globals:
-  #     _current_testcase (str) - 
-  #     _current_testsuite (str) - 
+  #     _current_testcase (str) - Current test case name.
+  #     _current_testsuite (str) - Current test suite name.
   #     _verbosity (int) - Verbosity level.
   #
   # Arguments:
@@ -182,7 +182,7 @@ ut__testcase_indicator() {
   # Returns:
   #     None.
   #
-  if [[ ${_verbosity} == 2 ]]; then
+  if [[ ${_verbosity} = 2 ]]; then
     echo -n "${_current_testcase} (${_current_testsuite}) ... "
   fi
 }
@@ -196,7 +196,7 @@ assertEqual() {
   local result="$1"
   local expected="$2"
 
-  if [[ "${result}" = "${expected}" ]]; then
+  if [ "${result}" = "${expected}" ]; then
     return 0
   else
     ut__create_fail_message
@@ -209,7 +209,7 @@ assertNotEqual() {
   local result="$1"
   local expected="$2"
 
-  if [[ "${result}" != "${expected}" ]]; then
+  if [ "${result}" != "${expected}" ]; then
     return 0
   else
     ut__create_fail_message
@@ -222,7 +222,8 @@ assertTrue() {
   # assertTrue ""  => fail
   local result="$1"
 
-  if ([ "${result}" != "0" ]) && ([ "${result}" ]); then
+  if [ "${result}" != "0" ] \
+       && [ "${result}" ]; then
     return 0
   else
     ut__create_fail_message
@@ -235,7 +236,8 @@ assertFalse() {
   # assertFalse ""  => pass
   local result="$1"
 
-  if ([ "${result}" = "0" ]) || ([ ! "${result}" ]); then
+  if [ "${result}" = "0" ] \
+      || [ ! "${result}" ]; then
     return 0
   else
     ut__create_fail_message
@@ -248,7 +250,8 @@ assertRaises() {
   local result="$1"
   local expected="$2"
 
-  if [[ "${result}" = "${expected}" ]]; then
+  if [ -n "${expected}" ] \
+      && [ "${result}" = "${expected}" ]; then
     return 0
   else
     ut__create_fail_message
@@ -260,7 +263,11 @@ assertGreater() {
   local result=$1
   local expected=$2
 
-  if (( ${result} > ${expected} )); then
+  if [ -n "${result}" ] \
+      && [ -n "${expected}" ] \
+      && [ ${result} -eq ${result} 2> /dev/null ] \
+      && [ ${expected} -eq ${expected} 2> /dev/null ] \
+      && [ ${result} -gt ${expected} ]; then
     return 0
   else
     ut__create_fail_message
@@ -272,7 +279,11 @@ assertGreaterEqual() {
   local result=$1
   local expected=$2
 
-  if (( ${result} >= ${expected} )); then
+  if [ -n "${result}" ] \
+      && [ -n "${expected}" ] \
+      && [ ${result} -eq ${result} 2> /dev/null ] \
+      && [ ${expected} -eq ${expected} 2> /dev/null ] \
+      && [ ${result} -ge ${expected} ]; then
     return 0
   else
     ut__create_fail_message
@@ -284,7 +295,11 @@ assertLess() {
   local result=$1
   local expected=$2
 
-  if (( ${result} < ${expected} )); then
+  if [ -n "${result}" ] \
+      && [ -n "${expected}" ] \
+      && [ ${result} -eq ${result} 2> /dev/null ] \
+      && [ ${expected} -eq ${expected} 2> /dev/null ] \
+      && [ ${result} -lt ${expected} ]; then
     return 0
   else
     ut__create_fail_message
@@ -296,7 +311,11 @@ assertLessEqual() {
   local result=$1
   local expected=$2
 
-  if (( ${result} <= ${expected} )); then
+  if [ -n "${result}" ] \
+      && [ -n "${expected}" ] \
+      && [ ${result} -eq ${result} 2> /dev/null ] \
+      && [ ${expected} -eq ${expected} 2> /dev/null ] \
+      && [ ${result} -le ${expected} ]; then
     return 0
   else
     ut__create_fail_message
@@ -325,7 +344,7 @@ ut__parse_args() {
   # Returns:
   #     String message or nothing.
   #
-  while [[ $1 == -* ]]; do
+  while [[ $1 = -* ]]; do
     case "$1" in
       -h|--help|-\?)
         ut__help_message
@@ -363,10 +382,10 @@ ut__parse_args() {
       ;;
 
       --cover-dir)
-        if [[ $# > 1 ]] && [[ ${_coverage} == 1 ]]; then
+        if [[ $# > 1 ]] && [[ ${_coverage} = 1 ]]; then
           _cover_dir="$2"
           shift 2
-        elif [[ ${_coverage} = 0 ]]
+        elif [[ ${_coverage} = 0 ]]; then
           ut__error_message msg='no coverage support enabled'
           exit 78  # configuration error (via /usr/include/sysexits.h)
         else
@@ -396,7 +415,7 @@ ut__autodiscovery() {
   # Returns:
   #     testfiles (str) - Files with tests.
   #
-  if [[ "${_test_dir}" == '' ]]; then
+  if [[ "${_test_dir}" = '' ]]; then
     _test_dir=$(find $(pwd)/ -regex '.*/tests' -print -quit)
   fi
 
