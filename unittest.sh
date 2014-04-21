@@ -561,12 +561,18 @@ ut__testrunner() {
       ut__after_test
 
       # reset test_case
-      unset -f "${test_case}"
+      if [ "${test_case}" != "" ]; then
+        unset -f ${test_case}
+      fi
     done
 
     # reset setup and teardown
-    unset -v "${setup}"
-    unset -v "${teardown}"
+    if [ "${setup}" != "" ]; then
+      unset -f ${setup}
+    fi
+    if [ "${teardown}" != "" ]; then
+      unset -f ${teardown}
+    fi
   done
 
   ut__stop
