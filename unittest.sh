@@ -116,7 +116,7 @@ ut__create_fail_message() {
   # Returns:
   #     None.
   #
-  if [[ ${_assert_failed} = 0 ]]; then
+  if [ ${_assert_failed} -eq 0 ]; then
     _fail_messages="${_fail_messages}$(printf "
 ======================================================================
  FAIL: ${_current_testcase} (${_current_testsuite})
@@ -140,9 +140,9 @@ ut__fail_indicator() {
   # Returns:
   #     None.
   #
-  if [[ ${_verbosity} = 1 ]]; then
+  if [ ${_verbosity} -eq 1 ]; then
     echo -n 'F'
-  elif [[ ${_verbosity} = 2 ]]; then
+  elif [ ${_verbosity} -eq 2 ]; then
     echo 'FAIL'
   fi
 }
@@ -160,9 +160,9 @@ ut__pass_indicator() {
   # Returns:
   #     None.
   #
-  if [[ ${_verbosity} = 1 ]]; then
+  if [ ${_verbosity} -eq 1 ]; then
     echo -n '.'
-  elif [[ ${_verbosity} = 2 ]]; then
+  elif [ ${_verbosity} -eq 2 ]; then
     echo 'ok'
   fi
 }
@@ -182,7 +182,7 @@ ut__testcase_indicator() {
   # Returns:
   #     None.
   #
-  if [[ ${_verbosity} = 2 ]]; then
+  if [ ${_verbosity} -eq 2 ]; then
     echo -n "${_current_testcase} (${_current_testsuite}) ... "
   fi
 }
@@ -344,15 +344,16 @@ ut__parse_args() {
   # Returns:
   #     String message or nothing.
   #
-  while [[ $1 = -* ]]; do
-    case "$1" in
+  arg_num=$#
+  for arg in "$@"; do
+    case "${arg}" in
       -h|--help|-\?)
         ut__help_message
         exit 0
       ;;
 
       -w|--where)
-        if (($# > 1)); then
+        if [ ${arg_num} -gt 1 ]; then
           _test_dir="$2"
           shift 2
         else
@@ -382,10 +383,11 @@ ut__parse_args() {
       ;;
 
       --cover-dir)
-        if [[ $# > 1 ]] && [[ ${_coverage} = 1 ]]; then
+        if [ ${arg_num} -gt 1 ] \
+            && [ ${_coverage} -eq 1 ]; then
           _cover_dir="$2"
           shift 2
-        elif [[ ${_coverage} = 0 ]]; then
+        elif [ ${_coverage} -eq 0 ]; then
           ut__error_message msg='no coverage support enabled'
           exit 78  # configuration error (via /usr/include/sysexits.h)
         else
@@ -399,6 +401,8 @@ ut__parse_args() {
         exit 64  # command line usage error (via /usr/include/sysexits.h)
       ;;
     esac
+
+    arg_num=$(( ${arg_num} - 1 ))
   done
 }
 
@@ -415,7 +419,7 @@ ut__autodiscovery() {
   # Returns:
   #     testfiles (str) - Files with tests.
   #
-  if [[ "${_test_dir}" = '' ]]; then
+  if [ "${_test_dir}" = '' ]; then
     _test_dir=$(find $(pwd)/ -regex '.*/tests' -print -quit)
   fi
 
@@ -462,7 +466,7 @@ ut__stop() {
   # in format: seconds.microseconds (eg. 0.012)
   tests_time="${tests_time:0:${#tests_time}-9}.${tests_time:${#tests_time}-9:${#tests_time}-7}"
 
-  if (( ${_tests_failed} > 0 )); then
+  if [ ${_tests_failed} -gt 0 ]; then
     printf "${_fail_messages}"
     end_status="FAILED (failures=${_tests_failed})"
   else
@@ -510,11 +514,11 @@ ut__after_test() {
   # Returns:
   #     None.
   #
-  (( _tests_run++ ))
+  _tests_run=$(( ${_tests_run} + 1 ))
 
-  if [[ ${_assert_failed} = 1 ]]; then
+  if [ ${_assert_failed} -eq 1 ]; then
     ut__fail_indicator
-    (( _tests_failed++ ))
+    _tests_failed=$(( ${_tests_failed} + 1 ))
   else
     ut__pass_indicator
   fi
@@ -540,7 +544,7 @@ ut__testrunner() {
 
     _current_testsuite="${testfile#"$(pwd)/"}"
 
-    source ${testfile}
+    . ${testfile}
     local setup=$(grep -o "setUp" ${testfile})
     local teardown=$(grep -o "tearDown" ${testfile})
     local test_suite=$(grep -o "test_[^\(]*" ${testfile})
@@ -557,11 +561,12 @@ ut__testrunner() {
       ut__after_test
 
       # reset test_case
-      unset -f ${test_case}
+      unset -f "${test_case}"
     done
 
     # reset setup and teardown
-    unset -v ${setup} ${teardown}
+    unset -v "${setup}"
+    unset -v "${teardown}"
   done
 
   ut__stop
