@@ -97,6 +97,10 @@ ut__error_message() {
   local msg
   local "$@"
 
+  if [ -z "${msg}" ]; then  # no specified message
+    msg="unknown error"
+  fi
+
   echo "Error: ${msg}." 1>&2
 }
 
@@ -116,7 +120,7 @@ ut__create_fail_message() {
   # Returns:
   #     None.
   #
-  if [ ${_assert_failed} -eq 0 ]; then
+  if [ "${_assert_failed}" = "0" ]; then
     _fail_messages="${_fail_messages}$(printf "
 ======================================================================
  FAIL: ${_current_testcase} (${_current_testsuite})
@@ -140,10 +144,12 @@ ut__fail_indicator() {
   # Returns:
   #     None.
   #
-  if [ ${_verbosity} -eq 1 ]; then
-    echo -n 'F'
-  elif [ ${_verbosity} -eq 2 ]; then
+  if [ "${_verbosity}" = "0" ]; then  # quiet verbosity
+    return 0
+  elif [ "${_verbosity}" = "2" ]; then
     echo 'FAIL'
+  else  # normal verbosity
+    echo -n 'F'
   fi
 }
 
@@ -160,10 +166,12 @@ ut__pass_indicator() {
   # Returns:
   #     None.
   #
-  if [ ${_verbosity} -eq 1 ]; then
-    echo -n '.'
-  elif [ ${_verbosity} -eq 2 ]; then
+  if [ "${_verbosity}" = "0" ]; then  # quiet verbosity
+    return 0
+  elif [ "${_verbosity}" = "2" ]; then
     echo 'ok'
+  else  # normal verbosity
+    echo -n '.'
   fi
 }
 
@@ -182,7 +190,7 @@ ut__testcase_indicator() {
   # Returns:
   #     None.
   #
-  if [ ${_verbosity} -eq 2 ]; then
+  if [ "${_verbosity}" = "2" ]; then
     echo -n "${_current_testcase} (${_current_testsuite}) ... "
   fi
 }
