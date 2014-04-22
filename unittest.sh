@@ -115,20 +115,34 @@ ut__create_fail_message() {
   #     _fail_messages (str) - 
   #
   # Arguments:
-  #     None.
+  #     name (str) - Assert name.
+  #     result (str) -
+  #     expected (str) - Expected result.
   #
   # Returns:
   #     None.
   #
+  local name
+  local result
+  local expected
+  name="$1"
+  result="$2"
+  expected="$3"
+
   if [ "${_assert_failed}" = "0" ]; then
     _fail_messages="${_fail_messages}$(printf "
 ======================================================================
  FAIL: ${_current_testcase} (${_current_testsuite})
 ----------------------------------------------------------------------
- 
- ")"
+")"
     _assert_failed=1
   fi
+
+  _fail_messages="${_fail_messages}$(printf "
+-> ${name} failed
+   expected: ${expected}
+   got: ${result}
+ ")"
 }
 
 ut__fail_indicator() {
@@ -207,7 +221,7 @@ assertEqual() {
   if [ "${result}" = "${expected}" ]; then
     return 0
   else
-    ut__create_fail_message
+    ut__create_fail_message "assertEqual" "${result}" "${expected}"
     return 1
   fi
 }
@@ -220,7 +234,7 @@ assertNotEqual() {
   if [ "${result}" != "${expected}" ]; then
     return 0
   else
-    ut__create_fail_message
+    ut__create_fail_message "assertNotEqual" "${result}" "not ${expected}"
     return 1
   fi
 }
@@ -234,7 +248,7 @@ assertTrue() {
        && [ "${result}" ]; then
     return 0
   else
-    ut__create_fail_message
+    ut__create_fail_message "assertTrue" "${result}" "1"
     return 1
   fi
 }
@@ -248,7 +262,7 @@ assertFalse() {
       || [ ! "${result}" ]; then
     return 0
   else
-    ut__create_fail_message
+    ut__create_fail_message "assertFalse" "${result}" "0"
     return 1
   fi
 }
@@ -262,7 +276,7 @@ assertRaises() {
       && [ "${result}" = "${expected}" ]; then
     return 0
   else
-    ut__create_fail_message
+    ut__create_fail_message "assertRaises" "${result}" "${expected}"
     return 1
   fi
 }
@@ -278,7 +292,7 @@ assertGreater() {
       && [ ${result} -gt ${expected} ]; then
     return 0
   else
-    ut__create_fail_message
+    ut__create_fail_message "assertGreater" "${result}" "> ${expected}"
     return 1
   fi
 }
@@ -294,7 +308,7 @@ assertGreaterEqual() {
       && [ ${result} -ge ${expected} ]; then
     return 0
   else
-    ut__create_fail_message
+    ut__create_fail_message "assertGreaterEqual" "${result}" ">= ${expected}"
     return 1
   fi
 }
@@ -310,7 +324,7 @@ assertLess() {
       && [ ${result} -lt ${expected} ]; then
     return 0
   else
-    ut__create_fail_message
+    ut__create_fail_message "assertLess" "${result}" "< ${expected}"
     return 1
   fi
 }
@@ -326,7 +340,7 @@ assertLessEqual() {
       && [ ${result} -le ${expected} ]; then
     return 0
   else
-    ut__create_fail_message
+    ut__create_fail_message "assertLessEqual" "${result}" "<= ${expected}"
     return 1
   fi
 }
