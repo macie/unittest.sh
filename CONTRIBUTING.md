@@ -14,4 +14,4 @@ We are using [Google's Shell Style Guide](https://google-styleguide.googlecode.c
 
 * functions name in format: `ut_<namespace>__<function_name>` (eg. *ut_parser__find_functions*)
 
-* (local) variable names as above: `ut_<namespace>__<local_variable_name>` (eg. *ut_parser__pattern*)
+* local variable are normal variables (without `local` or `typeset` declaration - POSIX!) but have special names: `ut<hash>__<local_variable_name>` where `<hash>` is first 3 character of sha1 sum of function name (eg. *utac4__message* inside of **ut_msg__error()** function). You can easily generate hash in terminal with command: `echo "function_name" | sha1sum | cut -c -3`
