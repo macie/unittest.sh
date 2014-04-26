@@ -20,11 +20,11 @@ first_level_comments='^#.*$'
 # read template line by line
 while IFS= read -r line; do
   # write line only if not matched
-  ( printf '%s' "${line}" | grep -v "${insert_pattern}" )
+  ( printf '%s\n' "${line}" | grep -v "${insert_pattern}" )
   # if line matched then insert file
   if [ "$?" -ne 0 ]; then
     # get name of file to insert
-    found_file=$(printf '%s' "${line}" | sed "s/${insert_pattern}/\1/")
+    found_file=$(printf '%s\n' "${line}" | sed "s/${insert_pattern}/\1/")
     # remove first level comments
     #   and write insert file or nothing (if no file)
     grep -v "${first_level_comments}" "${found_file}" 2> /dev/null

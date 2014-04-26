@@ -7,17 +7,16 @@
 
 
 SOURCE_DIR = "./src"
-BUILD_DIR = "./build"
+BUILD_DIR = "build"
 
 build:
 	cp -r "$(SOURCE_DIR)" "$(BUILD_DIR)"
-	cd "$(BUILD_DIR)"; \
-		sh script_builder.sh
-	cp "$(BUILD_DIR)/unittest.sh" unittest.sh
+	cd "$(BUILD_DIR)"; sh script_builder.sh; echo
+	cp "$(BUILD_DIR)/unittest.sh" "unittest.sh"
 	rm -rf "$(BUILD_DIR)"
 
 test:
-	unittest.sh "$(SOURCE_DIR)"
+	unittest.sh $(SOURCE_DIR)
 
 deploy:
 	test && create && git push
