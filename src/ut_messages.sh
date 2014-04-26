@@ -24,19 +24,19 @@ ut_msg__help() {
   # Returns:
   #     String message to standard output.
   #
-  echo 'unittest.sh - unit tests framework for shell scripts.'
-  echo 'Usage:'
-  echo '  unittest.sh [options] [filename]'
-  echo 
-  echo 'Options:'
-  echo '  -h, --help                      Show this help and exit.'
-  echo '  -V, --version                   Show version number and exit.'
-  echo '  -w, --where <directory>         Look for tests in this directory.'
-  echo '  -v, --verbose                   Be more verbose.'
-  echo '  -q, --quiet                     Be less verbose.'
-  echo '      --with-coverage             Enable plugin coverage.sh.'
-  echo '      --cover-dir <directory>     Restrict coverage output to'
-  echo '                                  selected directory.'
+  printf '%s\\n' \
+    'unittest.sh - unit tests framework for shell scripts.' \
+    'Usage:' \
+    '  unittest.sh [options] [directory or file]' \
+    '' \
+    'Options:' \
+    '  -h, --help                      Show this help and exit.' \
+    '  -V, --version                   Show version number and exit.' \
+    '  -v, --verbose                   Be more verbose.' \
+    '  -q, --quiet                     Be less verbose.' \
+    '      --with-coverage             Enable plugin coverage.sh.' \
+    '      --cover-dir <directory>     Restrict coverage output to' \
+    '                                  selected directory.'
 }
 
 ut_msg__version() {
@@ -57,10 +57,10 @@ ut_msg__version() {
   #
   ut89e__version="$1"
 
-  echo "unittest.sh ${ut89e__version}"
-  echo
-  echo 'Copyright (c) 2014 Maciej Żok'
-  echo 'MIT License (http://opensource.org/licenses/MIT)'
+  printf '%s\\n' \
+    "unittest.sh ${ut89e__version}" \
+    'Copyright (c) 2014 Maciej Żok' \
+    'MIT License (http://opensource.org/licenses/MIT)'
 }
 
 ut_msg__error() {
@@ -82,10 +82,10 @@ ut_msg__error() {
   utac4__message="$1"
 
   if [ -z "${utac4__message}" ]; then  # no specified message
-    utac4__message="unknown error"
+    utac4__message='unknown error'
   fi
 
-  echo "Error: ${utac4__message}." 1>&2
+  printf 'Error: %s.\\n' "${utac4__message}" 1>&2
 }
 
 ut_msg__testcase_indicator() {
@@ -136,9 +136,9 @@ ut_msg__pass_indicator() {
   if [ "${ut9d9__verbosity}" = "0" ]; then  # quiet verbosity
     return 0
   elif [ "${ut9d9__verbosity}" = "2" ]; then
-    echo 'ok'
+    printf '%s\\n' 'ok'
   else  # normal verbosity
-    printf "%s" '.'
+    printf '%s' '.'
   fi
 }
 
@@ -163,9 +163,9 @@ ut_msg__fail_indicator() {
   if [ "${ut755__verbosity}" = '0' ]; then  # quiet verbosity
     return 0
   elif [ "${ut755__verbosity}" = '2' ]; then
-    echo 'FAIL'
+    printf '%s\\n' 'FAIL'
   else  # normal verbosity
-    printf "%s" 'F'
+    printf '%s' 'F'
   fi
 }
 
@@ -192,11 +192,10 @@ ut_msg__assert_fail(){
   ut989__test_failed="$3"
 
   if [ "${ut989__test_failed}" = "0" ]; then
-    printf "%s" "
-======================================================================
- FAIL: ${ut989__testcase} (${ut989__testsuite})
-----------------------------------------------------------------------
-"
+    printf '%s\\n' \
+      '======================================================================' \
+      " FAIL: ${ut989__testcase} (${ut989__testsuite})" \
+      '----------------------------------------------------------------------'
     return 1
   fi
 }
@@ -223,11 +222,10 @@ ut_msg__traceback() {
   ut43f__result="$2"
   ut43f__expected="$3"
 
-  printf "%s" "
--> ${ut43f__name} failed
-   expected: ${ut43f__expected}
-   got: ${ut43f__result}
- "
+  printf '%s\\n' \
+    "-> ${ut43f__name} failed" \
+    "   expected: ${ut43f__expected}" \
+    "   got: ${ut43f__result}"
 }
 
 ut_msg__tests_summary() {
@@ -252,15 +250,15 @@ ut_msg__tests_summary() {
   ut9c9__tests_failed="$2"
   ut9c9__tests_time="$3"
 
-  printf "%s" "
-----------------------------------------------------------------------
-Ran ${ut9c9__tests_ran} tests in ${ut9c9__tests_time}s
+  printf '%s\\n' \
+    '----------------------------------------------------------------------' \
+    "Ran ${ut9c9__tests_ran} tests in ${ut9c9__tests_time}s" \
+    ""
 
-"
   if [ "${ut9c9__tests_failed}" -gt 0 ]; then
-    printf "%s" "FAILED (failures=${ut9c9__tests_failed})"
+    printf '%s\\n' "FAILED (failures=${ut9c9__tests_failed})"
     return 1
   else
-    printf "%s" 'OK'
+    printf '%s\\n' 'OK'
   fi
 }

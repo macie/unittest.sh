@@ -34,12 +34,12 @@ ut_parser__parser() {
   else
     original_IFS="${IFS}"
     IFS=:
-    ut_parser__functions=$(\
-      sed -n "${ut_parser__function_pattern}" "${ut_parser__filename}")
+    ut_parser__functions=$(sed -n "${ut_parser__function_pattern}" \
+                                  "${ut_parser__filename}")
     IFS="${original_IFS}"
 
     # return
-    echo "${ut_parser__functions}"
+    printf '%s' "${ut_parser__functions}"
   fi
 }
 

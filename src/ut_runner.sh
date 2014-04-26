@@ -27,7 +27,7 @@ ut_runner__autodiscovery() {
   ut8cf__test_dir="$1"
 
   if [ "${ut8cf__test_dir}" = '' ]; then
-    ut8cf__test_dir=$(find "$(pwd)/" -regex '.*/tests' -print -quit)
+    ut8cf__test_dir=$(find "." -regex '.*/tests' -print -quit)
   fi
 
   find "${ut8cf__test_dir}" -name "test_*.sh" || return 1
@@ -78,8 +78,8 @@ ut_runner__stop() {
 
   ut5d8__tests_endtime="$(date +%s%N)"    # nanoseconds_since_epoch
   # required visible decimal place for seconds (leading zeros if needed)
-  ut5d8__tests_time="$( \
-    printf "%010d" "$(( ut5d8__tests_endtime - ut5d8__starttime ))")"
+  ut5d8__tests_time="$(printf "%010d" \
+                              "$(( ut5d8__tests_endtime - ut5d8__starttime ))")"
 
   # in format: seconds.microseconds (eg. 0.012)
   ut5d8__tests_time="${ut5d8__tests_time:0:${#ut5d8__tests_time}-9}.${ut5d8__tests_time:${#ut5d8__tests_time}-9:${#ut5d8__tests_time}-7}"

@@ -34,12 +34,14 @@ ut_assert__assertEqual() {
   if [ "${uted1__result}" = "${uted1__expected}" ]; then
     return 0
   else
-    ut_msg__assert_fail \
-      "${CURRENT_TESTSUITE}" "${CURRENT_TESTCASE}" "${TEST_FAIL_FLAG}"
+    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
+                        "${CURRENT_TESTCASE}" \
+                        "${TEST_FAIL_FLAG}"
     TEST_FAIL_FLAG=$?
 
     ut_msg__traceback "assertEqual" \
-      "${uted1__result}" "${uted1__expected}"
+                      "${uted1__result}" \
+                      "${uted1__expected}"
     return 1
   fi
 }
@@ -70,12 +72,14 @@ ut_assert__assertNotEqual() {
   if [ "${ut295__result}" != "${ut295__expected}" ]; then
     return 0
   else
-    ut_msg__assert_fail \
-      "${CURRENT_TESTSUITE}" "${CURRENT_TESTCASE}" "${TEST_FAIL_FLAG}"
+    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
+                        "${CURRENT_TESTCASE}" \
+                        "${TEST_FAIL_FLAG}"
     TEST_FAIL_FLAG=$?
 
     ut_msg__traceback "assertNotEqual" \
-      "${ut295__result}" "not ${ut295__expected}"
+                      "${ut295__result}" \
+                      "not ${ut295__expected}"
     return 1
   fi
 }
@@ -106,12 +110,14 @@ ut_assert__assertTrue() {
        && [ "${utfb5__result}" ]; then
     return 0
   else
-    ut_msg__assert_fail \
-      "${CURRENT_TESTSUITE}" "${CURRENT_TESTCASE}" "${TEST_FAIL_FLAG}"
+    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
+                        "${CURRENT_TESTCASE}" \
+                        "${TEST_FAIL_FLAG}"
     TEST_FAIL_FLAG=$?
 
     ut_msg__traceback "assertTrue" \
-      "${utfb5__result}" "1"
+                      "${utfb5__result}" \
+                      "1"
     return 1
   fi
 }
@@ -142,12 +148,14 @@ ut_assert__assertFalse() {
       || [ ! "${utc56__result}" ]; then
     return 0
   else
-    ut_msg__assert_fail \
-      "${CURRENT_TESTSUITE}" "${CURRENT_TESTCASE}" "${TEST_FAIL_FLAG}"
+    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
+                        "${CURRENT_TESTCASE}" \
+                        "${TEST_FAIL_FLAG}"
     TEST_FAIL_FLAG=$?
 
     ut_msg__traceback "assertFalse" \
-      "${utc56__result}" "0"
+                      "${utc56__result}" \
+                      "0"
     return 1
   fi
 }
@@ -179,12 +187,14 @@ ut_assert__assertRaises() {
       && [ "${ut713__result}" = "${ut713__expected}" ]; then
     return 0
   else
-    ut_msg__assert_fail \
-      "${CURRENT_TESTSUITE}" "${CURRENT_TESTCASE}" "${TEST_FAIL_FLAG}"
+    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
+                        "${CURRENT_TESTCASE}" \
+                        "${TEST_FAIL_FLAG}"
     TEST_FAIL_FLAG=$?
 
     ut_msg__traceback "assertRaises" \
-      "${ut713__result}" "${ut713__expected}"
+                      "${ut713__result}" \
+                      "${ut713__expected}"
     return 1
   fi
 }
@@ -219,12 +229,14 @@ ut_assert__assertGreater() {
       && [ "${utf74__result}" -gt "${utf74__expected}" ]; then
     return 0
   else
-    ut_msg__assert_fail \
-      "${CURRENT_TESTSUITE}" "${CURRENT_TESTCASE}" "${TEST_FAIL_FLAG}"
+    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
+                        "${CURRENT_TESTCASE}" \
+                        "${TEST_FAIL_FLAG}"
     TEST_FAIL_FLAG=$?
 
     ut_msg__traceback "assertGreater" \
-      "${utf74__result}" "> ${utf74__expected}"
+                      "${utf74__result}" \
+                      "> ${utf74__expected}"
     return 1
   fi
 }
@@ -259,12 +271,14 @@ ut_assert__assertGreaterEqual() {
       && [ "${ut5f1__result}" -ge "${ut5f1__expected}" ]; then
     return 0
   else
-    ut_msg__assert_fail \
-      "${CURRENT_TESTSUITE}" "${CURRENT_TESTCASE}" "${TEST_FAIL_FLAG}"
+    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
+                        "${CURRENT_TESTCASE}" \
+                        "${TEST_FAIL_FLAG}"
     TEST_FAIL_FLAG=$?
 
     ut_msg__traceback "assertGreaterEqual" \
-      "${ut5f1__result}" ">= ${ut5f1__expected}"
+                      "${ut5f1__result}" \
+                      ">= ${ut5f1__expected}"
     return 1
   fi
 }
@@ -299,12 +313,14 @@ ut_assert__assertLess() {
       && [ "${ut695__result}" -lt "${ut695__expected}" ]; then
     return 0
   else
-    ut_msg__assert_fail \
-      "${CURRENT_TESTSUITE}" "${CURRENT_TESTCASE}" "${TEST_FAIL_FLAG}"
+    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
+                        "${CURRENT_TESTCASE}" \
+                        "${TEST_FAIL_FLAG}"
     TEST_FAIL_FLAG=$?
 
     ut_msg__traceback "assertLess" \
-      "${ut695__result}" "< ${ut695__expected}"
+                      "${ut695__result}" \
+                      "< ${ut695__expected}"
     return 1
   fi
 }
@@ -339,12 +355,14 @@ ut_assert__assertLessEqual() {
       && [ "${ut199__result}" -le "${ut199__expected}" ]; then
     return 0
   else
-    ut_msg__assert_fail \
-      "${CURRENT_TESTSUITE}" "${CURRENT_TESTCASE}" "${TEST_FAIL_FLAG}"
+    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
+                        "${CURRENT_TESTCASE}" \
+                        "${TEST_FAIL_FLAG}"
     TEST_FAIL_FLAG=$?
 
     ut_msg__traceback "assertLessEqual" \
-      "${ut199__result}" "<= ${ut199__expected}"
+                      "${ut199__result}" \
+                      "<= ${ut199__expected}"
     return 1
   fi
 }
