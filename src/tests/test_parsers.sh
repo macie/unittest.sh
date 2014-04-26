@@ -91,3 +91,18 @@ test_find_functions() {
   assertEqual "${result_value}" "${expected_value}"
   assertRaises "${result_retcode}" "1"
 }
+
+
+#
+#  ut_parser__find_test_functions
+#
+
+test_find_functions() {
+  result_value=$(ut_parser__find_test_functions "${parser_testfile}")
+  result_retcode=$?
+
+  expected_value='test_some_func'
+
+  assertEqual "${result_value}" "${expected_value}"
+  assertRaises "${result_retcode}" "1"
+}
