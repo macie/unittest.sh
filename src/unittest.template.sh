@@ -12,7 +12,11 @@
 #   DEFAULTS
 #
 
-export UNITTEST_SH_VERSION='0.1-dev'
+readonly UNITTEST_SH_VERSION='0.1-dev'
+
+readonly QUIET_VERBOSE=0
+readonly NORMAL_VERBOSE=1
+readonly DETAILED_VERBOSE=2
 
 _coverage=0  # no coverage
 _cover_dir=''
@@ -28,6 +32,14 @@ _fail_messages=''
 _tests_starttime=''
 _current_testcase=''
 _current_testsuite=''
+
+
+#
+#   EXIT CODES
+#
+
+readonly EXIT_OK=0
+readonly EXIT_FAIL=1
 
 
 #
