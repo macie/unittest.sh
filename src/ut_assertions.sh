@@ -32,17 +32,17 @@ ut_assert__assertEqual() {
   uted1__expected="$2"
 
   if [ "${uted1__result}" = "${uted1__expected}" ]; then
-    return 0
+    return "${EXIT_OK}"
   else
-    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
-                        "${CURRENT_TESTCASE}" \
-                        "${TEST_FAIL_FLAG}"
-    TEST_FAIL_FLAG=$?
+    ut_msg__testcase_fail "${CURRENT_TESTSUITE}" \
+                          "${CURRENT_TESTCASE}" \
+                          "${TESTCASE_FAIL_FLAG}"
+    TESTCASE_FAIL_FLAG=$?
 
     ut_msg__traceback "assertEqual" \
                       "${uted1__result}" \
                       "${uted1__expected}"
-    return 1
+    return "${EXIT_FAIL}"
   fi
 }
 
@@ -70,17 +70,17 @@ ut_assert__assertNotEqual() {
   ut295__expected="$2"
 
   if [ "${ut295__result}" != "${ut295__expected}" ]; then
-    return 0
+    return "${EXIT_OK}"
   else
-    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
-                        "${CURRENT_TESTCASE}" \
-                        "${TEST_FAIL_FLAG}"
-    TEST_FAIL_FLAG=$?
+    ut_msg__testcase_fail "${CURRENT_TESTSUITE}" \
+                          "${CURRENT_TESTCASE}" \
+                          "${TESTCASE_FAIL_FLAG}"
+    TESTCASE_FAIL_FLAG=$?
 
     ut_msg__traceback "assertNotEqual" \
                       "${ut295__result}" \
                       "not ${ut295__expected}"
-    return 1
+    return "${EXIT_FAIL}"
   fi
 }
 
@@ -108,17 +108,17 @@ ut_assert__assertTrue() {
 
   if [ "${utfb5__result}" != "0" ] \
        && [ "${utfb5__result}" ]; then
-    return 0
+    return "${EXIT_OK}"
   else
-    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
-                        "${CURRENT_TESTCASE}" \
-                        "${TEST_FAIL_FLAG}"
-    TEST_FAIL_FLAG=$?
+    ut_msg__testcase_fail "${CURRENT_TESTSUITE}" \
+                          "${CURRENT_TESTCASE}" \
+                          "${TESTCASE_FAIL_FLAG}"
+    TESTCASE_FAIL_FLAG=$?
 
     ut_msg__traceback "assertTrue" \
                       "${utfb5__result}" \
                       "1"
-    return 1
+    return "${EXIT_FAIL}"
   fi
 }
 
@@ -146,17 +146,17 @@ ut_assert__assertFalse() {
 
   if [ "${utc56__result}" = "0" ] \
       || [ ! "${utc56__result}" ]; then
-    return 0
+    return "${EXIT_OK}"
   else
-    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
-                        "${CURRENT_TESTCASE}" \
-                        "${TEST_FAIL_FLAG}"
-    TEST_FAIL_FLAG=$?
+    ut_msg__testcase_fail "${CURRENT_TESTSUITE}" \
+                          "${CURRENT_TESTCASE}" \
+                          "${TESTCASE_FAIL_FLAG}"
+    TESTCASE_FAIL_FLAG=$?
 
     ut_msg__traceback "assertFalse" \
                       "${utc56__result}" \
                       "0"
-    return 1
+    return "${EXIT_FAIL}"
   fi
 }
 
@@ -174,28 +174,28 @@ ut_assert__assertRaises() {
   #     None.
   #
   # Arguments:
-  #     $1 (int) - Tested result.
-  #     $2 (int) - Expected result.
+  #     $1 (int) - Tested command.
+  #     $2 (int) - (optional) Expected status code. Default: 0.
   #
   # Returns:
   #     None.
   #
-  ut713__result="$1"
-  ut713__expected="$2"
+  ( eval "$1" ) > /dev/null 2>&1
+  ut713__result_retcode=$?
+  ut713__expected_retcode="${2:-0}"
 
-  if [ -n "${ut713__expected}" ] \
-      && [ "${ut713__result}" = "${ut713__expected}" ]; then
-    return 0
+  if [ "${ut713__result_retcode}" = "${ut713__expected_retcode}" ]; then
+    return "${EXIT_OK}"
   else
-    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
-                        "${CURRENT_TESTCASE}" \
-                        "${TEST_FAIL_FLAG}"
-    TEST_FAIL_FLAG=$?
+    ut_msg__testcase_fail "${CURRENT_TESTSUITE}" \
+                          "${CURRENT_TESTCASE}" \
+                          "${TESTCASE_FAIL_FLAG}"
+    TESTCASE_FAIL_FLAG=$?
 
     ut_msg__traceback "assertRaises" \
-                      "${ut713__result}" \
-                      "${ut713__expected}"
-    return 1
+                      "${ut713__result_retcode}" \
+                      "${ut713__expected_retcode}"
+    return "${EXIT_FAIL}"
   fi
 }
 
@@ -227,17 +227,17 @@ ut_assert__assertGreater() {
       && [ "${utf74__result}" -eq "${utf74__result}" ] 2> /dev/null \
       && [ "${utf74__expected}" -eq "${utf74__expected}" ] 2> /dev/null \
       && [ "${utf74__result}" -gt "${utf74__expected}" ]; then
-    return 0
+    return "${EXIT_OK}"
   else
-    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
-                        "${CURRENT_TESTCASE}" \
-                        "${TEST_FAIL_FLAG}"
-    TEST_FAIL_FLAG=$?
+    ut_msg__testcase_fail "${CURRENT_TESTSUITE}" \
+                          "${CURRENT_TESTCASE}" \
+                          "${TESTCASE_FAIL_FLAG}"
+    TESTCASE_FAIL_FLAG=$?
 
     ut_msg__traceback "assertGreater" \
                       "${utf74__result}" \
                       "> ${utf74__expected}"
-    return 1
+    return "${EXIT_FAIL}"
   fi
 }
 
@@ -269,17 +269,17 @@ ut_assert__assertGreaterEqual() {
       && [ "${ut5f1__result}" -eq "${ut5f1__result}" ] 2> /dev/null \
       && [ "${ut5f1__expected}" -eq "${ut5f1__expected}" ] 2> /dev/null \
       && [ "${ut5f1__result}" -ge "${ut5f1__expected}" ]; then
-    return 0
+    return "${EXIT_OK}"
   else
-    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
-                        "${CURRENT_TESTCASE}" \
-                        "${TEST_FAIL_FLAG}"
-    TEST_FAIL_FLAG=$?
+    ut_msg__testcase_fail "${CURRENT_TESTSUITE}" \
+                          "${CURRENT_TESTCASE}" \
+                          "${TESTCASE_FAIL_FLAG}"
+    TESTCASE_FAIL_FLAG=$?
 
     ut_msg__traceback "assertGreaterEqual" \
                       "${ut5f1__result}" \
                       ">= ${ut5f1__expected}"
-    return 1
+    return "${EXIT_FAIL}"
   fi
 }
 
@@ -311,17 +311,17 @@ ut_assert__assertLess() {
       && [ "${ut695__result}" -eq "${ut695__result}" ] 2> /dev/null \
       && [ "${ut695__expected}" -eq "${ut695__expected}" ] 2> /dev/null \
       && [ "${ut695__result}" -lt "${ut695__expected}" ]; then
-    return 0
+    return "${EXIT_OK}"
   else
-    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
-                        "${CURRENT_TESTCASE}" \
-                        "${TEST_FAIL_FLAG}"
-    TEST_FAIL_FLAG=$?
+    ut_msg__testcase_fail "${CURRENT_TESTSUITE}" \
+                          "${CURRENT_TESTCASE}" \
+                          "${TESTCASE_FAIL_FLAG}"
+    TESTCASE_FAIL_FLAG=$?
 
     ut_msg__traceback "assertLess" \
                       "${ut695__result}" \
                       "< ${ut695__expected}"
-    return 1
+    return "${EXIT_FAIL}"
   fi
 }
 
@@ -353,16 +353,16 @@ ut_assert__assertLessEqual() {
       && [ "${ut199__result}" -eq "${ut199__result}" ] 2> /dev/null \
       && [ "${ut199__expected}" -eq "${ut199__expected}" ] 2> /dev/null \
       && [ "${ut199__result}" -le "${ut199__expected}" ]; then
-    return 0
+    return "${EXIT_OK}"
   else
-    ut_msg__assert_fail "${CURRENT_TESTSUITE}" \
-                        "${CURRENT_TESTCASE}" \
-                        "${TEST_FAIL_FLAG}"
-    TEST_FAIL_FLAG=$?
+    ut_msg__testcase_fail "${CURRENT_TESTSUITE}" \
+                          "${CURRENT_TESTCASE}" \
+                          "${TESTCASE_FAIL_FLAG}"
+    TESTCASE_FAIL_FLAG=$?
 
     ut_msg__traceback "assertLessEqual" \
                       "${ut199__result}" \
                       "<= ${ut199__expected}"
-    return 1
+    return "${EXIT_FAIL}"
   fi
 }

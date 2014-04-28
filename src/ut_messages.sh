@@ -223,9 +223,9 @@ ut_msg__traceback() {
   # Returns:
   #     None.
   #
-  ut43f__name="$1"
-  ut43f__result="$2"
-  ut43f__expected="$3"
+  ut43f__name="${1:-some assert}"
+  ut43f__result="${2:-<unknown>}"
+  ut43f__expected="${3:-<unknown>}"
 
   printf '%s\\n' \
     "-> ${ut43f__name} failed" \
@@ -244,16 +244,17 @@ ut_msg__tests_summary() {
   #     None.
   #
   # Arguments:
-  #     $1 (int) - Tests ran number.
-  #     $2 (int) - Tests failed number.
-  #     $3 (int) - Tests time.
+  #     $1 (int) - Tests time.
+  #     $2 (int) - Tests ran number.
+  #     $3 (int) - Tests failed number. Default: 0.
   #
   # Returns:
   #     Tests summary message.
   #
-  ut9c9__tests_ran="$1"
-  ut9c9__tests_failed="$2"
-  ut9c9__tests_time="$3"
+  ut9c9__tests_time="$1"
+  ut9c9__tests_ran="$2"
+  ut9c9__tests_failed="${3:-0}"
+
 
   printf '%s\\n' \
     '----------------------------------------------------------------------' \
