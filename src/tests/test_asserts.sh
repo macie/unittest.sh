@@ -1,64 +1,58 @@
 #!/bin/sh
+#
+# Tests for ut_assertions.
+#
 
 # import tested script
-. "../unittest.sh"
+. "../ut_assertions.sh"
+
 
 #
 #  assertEqual
 #
 
 test_assertEqual_equal_ints() {
-  result_value=$(ut_assert__assertEqual 0 0)
-  result_value=$?
+  tested_command='ut_assert__assertEqual 0 0'
 
-  expected_value=0  # pass
-
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}"
 }
 
 test_assertEqual_unequal_ints() {
-  result_value=$(ut_assert__assertEqual 0 1)
-  result_value=$?
+  tested_command='ut_assert__assertEqual 0 1'
 
-  expected_value=1  # fail
+  expected_retcode=1  # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertEqual_equal_str() {
-  result_value=$(ut_assert__assertEqual "a" "a")
-  result_value=$?
+  tested_command='ut_assert__assertEqual "a" "a"'
 
-  expected_value=0  # pass
-
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}"
 }
 
 test_assertEqual_unequal_str() {
-  result_value=$(ut_assert__assertEqual "a" "A")
-  result_value=$?
+  tested_command='ut_assert__assertEqual "a" "A"'
 
-  expected_value=1  # fail
+  expected_retcode=1  # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertEqual_int_and_str() {
-  result_value=$(ut_assert__assertEqual 1 "a")
-  result_value=$?
+  tested_command='ut_assert__assertEqual 1 "a"'
 
-  expected_value=1  # fail
+  expected_retcode=1  # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertEqual_int_and_empty_str() {
-  result_value=$(ut_assert__assertEqual 0 "")
-  result_value=$?
+  tested_command='ut_assert__assertEqual 0 ""'
 
-  expected_value=1  # fail
+  expected_retcode=1  # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 
@@ -67,57 +61,43 @@ test_assertEqual_int_and_empty_str() {
 #
 
 test_assertNotEqual_equal_ints() {
-  result_value=$(ut_assert__assertNotEqual 0 0)
-  result_value=$?
+  tested_command='ut_assert__assertNotEqual 0 0'
 
-  expected_value=1  # fail
+  expected_retcode=1  # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertNotEqual_unequal_ints() {
-  result_value=$(ut_assert__assertNotEqual 0 1)
-  result_value=$?
+  tested_command='ut_assert__assertNotEqual 0 1'
 
-  expected_value=0  # pass
-
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}"
 }
 
 test_assertNotEqual_equal_str() {
-  result_value=$(ut_assert__assertNotEqual "a" "a")
-  result_value=$?
+  tested_command='ut_assert__assertNotEqual "a" "a"'
 
-  expected_value=1  # fail
+  expected_retcode=1  # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertNotEqual_unequal_str() {
-  result_value=$(ut_assert__assertNotEqual "a" "A")
-  result_value=$?
+  tested_command='ut_assert__assertNotEqual "a" "A"'
 
-  expected_value=0  # pass
-
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}"
 }
 
 test_assertNotEqual_int_and_str() {
-  result_value=$(ut_assert__assertNotEqual 1 "a")
-  result_value=$?
+  tested_command='ut_assert__assertNotEqual 1 "a"'
 
-  expected_value=0  # pass
-
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}"
 }
 
 test_assertNotEqual_int_and_empty_str() {
-  result_value=$(ut_assert__assertNotEqual 0 "")
-  result_value=$?
+  tested_command='ut_assert__assertNotEqual 0 ""'
 
-  expected_value=0  # pass
-
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}"
 }
 
 
@@ -126,66 +106,57 @@ test_assertNotEqual_int_and_empty_str() {
 #
 
 test_assertTrue_empty_str() {
-  result_value=$(ut_assert__assertTrue "")
-  result_value=$?
+  tested_command='ut_assert__assertTrue ""'
 
-  expected_value=1  # fail
+  expected_retcode=1  # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertTrue_str() {
-  result_value=$(ut_assert__assertTrue "test")
-  result_value=$?
+  tested_command='ut_assert__assertTrue "test"'
 
-  expected_value=0  # pass
-
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}"
 }
 
 test_assertTrue_zero() {
-  result_value=$(ut_assert__assertTrue 0)
-  result_value=$?
+  tested_command='ut_assert__assertTrue 0'
 
-  expected_value=1  # fail
+  expected_retcode=1  # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertTrue_small_negative_int() {
-  result_value=$(ut_assert__assertTrue -1)
-  result_value=$?
+  tested_command='ut_assert__assertTrue -1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertTrue_large_negative_int() {
-  result_value=$(ut_assert__assertTrue -1000)
-  result_value=$?
+  tested_command='ut_assert__assertTrue -1000'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertTrue_small_positive_int() {
-  result_value=$(ut_assert__assertTrue 1)
-  result_value=$?
+  tested_command='ut_assert__assertTrue 1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertTrue_large_positive_int() {
-  result_value=$(ut_assert__assertTrue 1000)
-  result_value=$?
+  tested_command='ut_assert__assertTrue 1000'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 
@@ -194,66 +165,55 @@ test_assertTrue_large_positive_int() {
 #
 
 test_assertFalse_empty_str() {
-  result_value=$(ut_assert__assertFalse "")
-  result_value=$?
+  tested_command='ut_assert__assertFalse ""'
 
-  expected_value=0  # pass
-
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}"
 }
 
 test_assertFalse_str() {
-  result_value=$(ut_assert__assertFalse "test")
-  result_value=$?
+  tested_command='ut_assert__assertFalse "test"'
 
-  expected_value=1  # fail
+  expected_retcode=1  # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertFalse_zero() {
-  result_value=$(ut_assert__assertFalse 0)
-  result_value=$?
+  tested_command='ut_assert__assertFalse 0'
 
-  expected_value=0  # pass
-
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}"
 }
 
 test_assertFalse_small_negative_int() {
-  result_value=$(ut_assert__assertFalse -1)
-  result_value=$?
+  tested_command='ut_assert__assertFalse -1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertFalse_large_negative_int() {
-  result_value=$(ut_assert__assertFalse -1000)
-  result_value=$?
+  tested_command='ut_assert__assertFalse -1000'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertFalse_small_positive_int() {
-  result_value=$(ut_assert__assertFalse 1)
-  result_value=$?
+  tested_command='ut_assert__assertFalse 1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertFalse_large_positive_int() {
-  result_value=$(ut_assert__assertFalse 1000)
-  result_value=$?
+  tested_command='ut_assert__assertFalse 1000'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 
@@ -262,50 +222,47 @@ test_assertFalse_large_positive_int() {
 #
 
 test_assertRaises_pass() {
-  func_return_code=0
-  result_value=$(ut_assert__assertRaises ${func_return_code} 0)
-  result_value=$?
+  tested_command='ut_assert__assertRaises true'
 
-  expected_value=0 # pass
-
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}"
 }
 
 test_assertRaises_error() {
-  func_return_code=1
-  result_value=$(ut_assert__assertRaises ${func_return_code} 1)
-  result_value=$?
+  tested_command='ut_assert__assertRaises false'
 
-  expected_value=0 # pass
+  assertRaises "${tested_command}"
+}
 
-  assertRaises ${result_value} ${expected_value}
+test_assertRaises_empty() {
+  tested_command='ut_assert__assertRaises'
+
+  expected_retcode=1 # fail
+
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertRaises_empty_string() {
-  result_value=$(ut_assert__assertRaises "" 0)
-  result_value=$?
+  tested_command='ut_assert__assertRaises ""'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertRaises_string() {
-  result_value=$(ut_assert__assertRaises "a" 0)
-  result_value=$?
+  tested_command='ut_assert__assertRaises "some test string"'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertRaises_two_empty_strings() {
-  result_value=$(ut_assert__assertRaises "" "")
-  result_value=$?
+  tested_command='ut_assert__assertRaises "" ""'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 
@@ -314,111 +271,99 @@ test_assertRaises_two_empty_strings() {
 #
 
 test_assertGreater_positives() {
-  result_value=$(ut_assert__assertGreater 1 0)
-  result_value=$?
+  tested_command='ut_assert__assertGreater 1 0'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_positives_not_greater() {
-  result_value=$(ut_assert__assertGreater 0 1)
-  result_value=$?
+  tested_command='ut_assert__assertGreater 0 1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_positives_equal() {
-  result_value=$(ut_assert__assertGreater 1 1)
-  result_value=$?
+  tested_command='ut_assert__assertGreater 1 1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_negatives() {
-  result_value=$(ut_assert__assertGreater -1 -2)
-  result_value=$?
+  tested_command='ut_assert__assertGreater -1 -2'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_negatives_not_greater() {
-  result_value=$(ut_assert__assertGreater -2 -1)
-  result_value=$?
+  tested_command='ut_assert__assertGreater -2 -1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_negatives_equal() {
-  result_value=$(ut_assert__assertGreater -1 -1)
-  result_value=$?
+  tested_command='ut_assert__assertGreater -1 -1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_mixed() {
-  result_value=$(ut_assert__assertGreater 1 -1)
-  result_value=$?
+  tested_command='ut_assert__assertGreater 1 -1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_mixed_not_greater() {
-  result_value=$(ut_assert__assertGreater -1 1)
-  result_value=$?
+  tested_command='ut_assert__assertGreater -1 1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_string() {
-  result_value=$(ut_assert__assertGreater "a" -1)  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertGreater "a" -1'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_than_string() {
-  result_value=$(ut_assert__assertGreater 1 "a")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertGreater 1 "a"'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_two_strings() {
-  result_value=$(ut_assert__assertGreater "a" "a")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertGreater "a" "a"'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreater_two_empty_strings() {
-  result_value=$(ut_assert__assertGreater "" "")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertGreater "" ""'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 #
@@ -426,111 +371,99 @@ test_assertGreater_two_empty_strings() {
 #
 
 test_assertGreaterEqual_positives() {
-  result_value=$(ut_assert__assertGreaterEqual 1 0)
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual 1 0'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_positives_not_greater() {
-  result_value=$(ut_assert__assertGreaterEqual 0 1)
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual 0 1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_positives_equal() {
-  result_value=$(ut_assert__assertGreaterEqual 1 1)
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual 1 1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_negatives() {
-  result_value=$(ut_assert__assertGreaterEqual -1 -2)
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual -1 -2'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_negatives_not_greater() {
-  result_value=$(ut_assert__assertGreaterEqual -2 -1)
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual -2 -1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_negatives_equal() {
-  result_value=$(ut_assert__assertGreaterEqual -1 -1)
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual -1 -1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_mixed() {
-  result_value=$(ut_assert__assertGreaterEqual 1 -1)
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual 1 -1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_mixed_not_greater() {
-  result_value=$(ut_assert__assertGreaterEqual -1 1)
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual -1 1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_string() {
-  result_value=$(ut_assert__assertGreaterEqual "a" -1)  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual "a" -1'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_than_string() {
-  result_value=$(ut_assert__assertGreaterEqual 1 "a")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual 1 "a"'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_two_strings() {
-  result_value=$(ut_assert__assertGreaterEqual "a" "a")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual "a" "a"'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertGreaterEqual_two_empty_strings() {
-  result_value=$(ut_assert__assertGreaterEqual "" "")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertGreaterEqual "" ""'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 
@@ -539,111 +472,99 @@ test_assertGreaterEqual_two_empty_strings() {
 #
 
 test_assertLess_positives() {
-  result_value=$(ut_assert__assertLess 0 1)
-  result_value=$?
+  tested_command='ut_assert__assertLess 0 1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_positives_not_less() {
-  result_value=$(ut_assert__assertLess 1 0)
-  result_value=$?
+  tested_command='ut_assert__assertLess 1 0'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_positives_equal() {
-  result_value=$(ut_assert__assertLess 1 1)
-  result_value=$?
+  tested_command='ut_assert__assertLess 1 1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_negatives() {
-  result_value=$(ut_assert__assertLess -2 -1)
-  result_value=$?
+  tested_command='ut_assert__assertLess -2 -1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_negatives_not_less() {
-  result_value=$(ut_assert__assertLess -1 -2)
-  result_value=$?
+  tested_command='ut_assert__assertLess -1 -2'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_negatives_equal() {
-  result_value=$(ut_assert__assertLess -1 -1)
-  result_value=$?
+  tested_command='ut_assert__assertLess -1 -1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_mixed() {
-  result_value=$(ut_assert__assertLess -1 1)
-  result_value=$?
+  tested_command='ut_assert__assertLess -1 1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_mixed_not_less() {
-  result_value=$(ut_assert__assertLess 1 -1)
-  result_value=$?
+  tested_command='ut_assert__assertLess 1 -1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_string() {
-  result_value=$(ut_assert__assertLess "a" 1)  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertLess "a" 1'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_than_string() {
-  result_value=$(ut_assert__assertLess -1 "a")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertLess -1 "a"'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_two_strings() {
-  result_value=$(ut_assert__assertLess "a" "a")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertLess "a" "a"'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLess_two_empty_strings() {
-  result_value=$(ut_assert__assertLess "" "")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertLess "" ""'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 
@@ -652,109 +573,97 @@ test_assertLess_two_empty_strings() {
 #
 
 test_assertLessEqual_positives() {
-  result_value=$(ut_assert__assertLessEqual 0 1)
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual 0 1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_positives_not_less() {
-  result_value=$(ut_assert__assertLessEqual 1 0)
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual 1 0'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_positives_equal() {
-  result_value=$(ut_assert__assertLessEqual 1 1)
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual 1 1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_negatives() {
-  result_value=$(ut_assert__assertLessEqual -2 -1)
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual -2 -1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_negatives_not_less() {
-  result_value=$(ut_assert__assertLessEqual -1 -2)
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual -1 -2'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_negatives_equal() {
-  result_value=$(ut_assert__assertLessEqual -1 -1)
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual -1 -1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_mixed() {
-  result_value=$(ut_assert__assertLessEqual -1 1)
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual -1 1'
 
-  expected_value=0 # pass
+  expected_retcode=0 # pass
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_mixed_not_less() {
-  result_value=$(ut_assert__assertLessEqual 1 -1)
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual 1 -1'
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_string() {
-  result_value=$(ut_assert__assertLessEqual "a" 1)  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual "a" 1'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_than_string() {
-  result_value=$(ut_assert__assertLessEqual -1 "a")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual -1 "a"'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_two_strings() {
-  result_value=$(ut_assert__assertLessEqual "a" "a")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual "a" "a"'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
 
 test_assertLessEqual_two_empty_strings() {
-  result_value=$(ut_assert__assertLessEqual "" "")  # (str => int) == 0
-  result_value=$?
+  tested_command='ut_assert__assertLessEqual "" ""'  # (str => int) == 0
 
-  expected_value=1 # fail
+  expected_retcode=1 # fail
 
-  assertRaises ${result_value} ${expected_value}
+  assertRaises "${tested_command}" "${expected_retcode}"
 }
