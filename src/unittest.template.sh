@@ -12,34 +12,34 @@
 #   DEFAULTS
 #
 
-readonly UNITTEST_SH_VERSION='0.1-dev'
+readonly UT_VERSION='0.1-dev'
 
 readonly QUIET_VERBOSE=0
 readonly NORMAL_VERBOSE=1
 readonly DETAILED_VERBOSE=2
-
-_coverage=0  # no coverage
-_cover_dir=''
-_verbosity=1  # normal verbosity
-
-_test_dir=''
-_test_files=''
-
-_assert_failed=0
-_tests_run=0
-_tests_failed=0
-_fail_messages=''
-_tests_starttime=''
-_current_testcase=''
-_current_testsuite=''
 
 
 #
 #   EXIT CODES
 #
 
-readonly EXIT_OK=0
-readonly EXIT_FAIL=1
+readonly EXIT_OK=0            # successful exit
+readonly EXIT_FAIL=1          # general fail
+
+readonly EXIT_USAGE=130       # command line usage error
+readonly EXIT_CONFIG=131      # configuration error
+
+readonly EXIT_IOERROR=140     # input/output error
+readonly EXIT_NODIR=141       # directory not found
+readonly EXIT_NOFILE=142      # cannot open file
+readonly EXIT_NOFUNCTION=143  # function not found
+readonly EXIT_NOPATTERN=144   # pattern not found
+
+
+#
+#   PORTABLE
+#
+#   insert here content of file: <ut_portabillity.sh>
 
 
 #
