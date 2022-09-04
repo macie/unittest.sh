@@ -1,0 +1,18 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: "run tests"
+          command: ./unittest.sh tests/
+
+workflows:
+  version: 2
+  basic:
+    jobs:
+      - test
+

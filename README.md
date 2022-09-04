@@ -1,5 +1,7 @@
 # unittest.sh
 
+[![Build Status](https://dl.circleci.com/status-badge/img/gh/macie/unittest.sh/tree/master.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/macie/unittest.sh/tree/master)
+
 Unit testing framework for shell scripts.
 
 
