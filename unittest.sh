@@ -453,7 +453,7 @@ ut__start() {
   # Runs instruction before all tests.
   #
   # Globals:
-  #     _tests_starttime (str) - Start time of tests (in nanoseconds).
+  #     _tests_starttime (str) - Start time of tests (in seconds).
   #
   # Arguments:
   #     None.
@@ -461,7 +461,7 @@ ut__start() {
   # Returns:
   #     None.
   #
-  _tests_starttime="$(date +%s%N)"  # nanoseconds_since_epoch
+  _tests_starttime="$(date +%s)"  # seconds_since_epoch
 }
 
 ut__stop() {
@@ -469,7 +469,7 @@ ut__stop() {
   # Runs instruction after all tests.
   #
   # Globals:
-  #     _tests_starttime (str) - Start time of tests (in nanoseconds).
+  #     _tests_starttime (str) - Start time of tests (in seconds).
   #     _tests_run (int) - Number of tests.
   #     _tests_failed (int) - Number of failed tests.
   #
@@ -480,13 +480,9 @@ ut__stop() {
   #     None.
   #
   local end_status=""
-  local tests_endtime="$(date +%s%N)"    # nanoseconds_since_epoch
+  local tests_endtime="$(date +%s)"    # seconds_since_epoch
   # required visible decimal place for seconds (leading zeros if needed)
-  local tests_time="$( \
-    printf "%010d" "$(( ${tests_endtime} - ${_tests_starttime} ))")"
-
-  # in format: seconds.microseconds (eg. 0.012)
-  tests_time="${tests_time:0:${#tests_time}-9}.${tests_time:${#tests_time}-9:${#tests_time}-7}"
+  local tests_time="$(( ${tests_endtime} - ${_tests_starttime} ))"
 
   if [ ${_tests_failed} -gt 0 ]; then
     printf "${_fail_messages}"
