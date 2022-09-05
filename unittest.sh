@@ -442,10 +442,10 @@ ut__autodiscovery() {
   #     testfiles (str) - Files with tests.
   #
   if [ "${_test_dir}" = '' ]; then
-    _test_dir=$(find $(pwd)/ -regex '.*/tests' -print -quit)
+    _test_dir=$(find $(pwd)/ -type d -name 'tests' -print)
   fi
 
-  _test_files="$(find "${_test_dir}" -name "test_*.sh")"
+  _test_files="$(find "${_test_dir}" -name 'test_*.sh')"
 }
 
 ut__start() {
