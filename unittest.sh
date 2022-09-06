@@ -563,9 +563,9 @@ ut__testrunner() {
     _current_testsuite="${testfile#"$(pwd)/"}"
 
     . ${testfile}
-    local setup=$(grep -o "setUp" ${testfile})
-    local teardown=$(grep -o "tearDown" ${testfile})
-    local test_suite=$(grep -o "test_[^\(]*" ${testfile})
+    local setup=$(grep -o "^[ \t]*setUp" ${testfile})
+    local teardown=$(grep -o "^[ \t]*tearDown" ${testfile})
+    local test_suite=$(grep -o "^[ \t]*test_[^\(]*" ${testfile})
 
     for test_case in ${test_suite}; do
 
