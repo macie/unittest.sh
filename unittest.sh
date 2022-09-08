@@ -213,6 +213,24 @@ ut__testcase_indicator() {
 #   ASSERTIONS
 #
 
+test() {
+    # same arguments as command test(1)
+    ut__test_error_msg=`/bin/test "$@" 2>&1`
+    case $? in
+        0)  ;;
+        1)
+            ut__create_fail_message "test $* :" 'false' 'true'
+            return 1
+            ;;
+        *)
+            ut__create_fail_message "test $* :" "${ut__test_error_msg}" 'true'
+            return 1
+            ;;
+    esac
+
+    return 0
+}
+
 assertEqual() {
   # assertEqual 0 0  => pass
   local result="$1"
