@@ -209,21 +209,42 @@ ut__testcase_indicator() {
   fi
 }
 
+ut__test_debug_info() {
+    # $1 - category
+    # $2-... - paragraphs
+    # _current_testsuite
+    # _current_testcase
+    # prefix: UT1c0_
+    if [ -t 2 ]; then
+        printf '\x1b[34m-- %s [%s]\x1b[0m\n\n' "$1" "${_current_testsuite}:${_current_testcase}" >&2
+    else  # stderr is not interactive terminal, so color is useless
+        printf '-- %s [%s]\n\n' "$1" "${_current_testsuite}:${_current_testcase}" >&2
+    fi
+    shift 1
+    for UT1c0_paragraph in "$@"; do
+        printf '%s\n\n' "${UT1c0_paragraph}" >&2
+    done
+    unset -v UT1c0_paragraph
+}
+
 #
 #   ASSERTIONS
 #
 
 test() {
     # same arguments as command test(1)
-    ut__test_error_msg=`/bin/test "$@" 2>&1`
+    UT4e1_test_error_msg=`/bin/test "$@" 2>&1`
     case $? in
         0)  ;;
         1)
-            ut__create_fail_message "test $* :" 'false' 'true'
+            ut__test_debug_info 'FAILED TEST' \
+                "I expected 'test $*' to be true, but the result was false."
             return 1
             ;;
         *)
-            ut__create_fail_message "test $* :" "${ut__test_error_msg}" 'true'
+            ut__test_debug_info 'INVALID ASSERTION' \
+                "I tried to check 'test $*', but I got error with message: '${UT4e1_test_error_msg}'. Did you use proper operator?" \
+                "Hint: Some operators requires specific type of values. Read 'man test' to learn more."
             return 1
             ;;
     esac

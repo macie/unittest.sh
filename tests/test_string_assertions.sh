@@ -8,7 +8,7 @@ test_same_strings() {
 }
 
 test_same_strings_false() {
-    `test 'abc' = 'abb'`
+    `test 'abc' = 'abb' 2>/dev/null`
 
     test $? -eq 1
 }
@@ -39,7 +39,7 @@ test_different_strings() {
 }
 
 test_different_strings_false() {
-    `test 'a' != 'a'`
+    `test 'a' != 'a' 2>/dev/null`
 
     test $? -eq 1
 }
@@ -70,13 +70,13 @@ test_empty_string() {
 }
 
 test_empty_string_false() {
-    `test -z ' '`
+    `test -z ' ' 2>/dev/null`
 
     test $? -eq 1
 }
 
 test_empty_int() {
-    `test -z 0`
+    `test -z 0 2>/dev/null`
 
     test $? -eq 1
 }
@@ -89,7 +89,7 @@ test_nonempty_string() {
 }
 
 test_nonempty_string_false() {
-    `test -n ''`
+    `test -n '' 2>/dev/null`
 
     test $? -eq 1
 }
@@ -108,7 +108,7 @@ test_notnull_string() {
 }
 
 test_notnull_string_false() {
-    `test ''`
+    `test '' 2>/dev/null`
 
     test $? -eq 1
 }
