@@ -15,7 +15,7 @@ test_assertEqual_equal_ints() {
 }
 
 test_assertEqual_unequal_ints() {
-  result=$(assertEqual 0 1)
+  result=$(assertEqual 0 1 2>/dev/null)
   result=$?
 
   local expected=1  # fail
@@ -33,7 +33,7 @@ test_assertEqual_equal_str() {
 }
 
 test_assertEqual_unequal_str() {
-  result=$(assertEqual "a" "A")
+  result=$(assertEqual "a" "A" 2>/dev/null)
   result=$?
 
   local expected=1  # fail
@@ -42,7 +42,7 @@ test_assertEqual_unequal_str() {
 }
 
 test_assertEqual_int_and_str() {
-  result=$(assertEqual 1 "a")
+  result=$(assertEqual 1 "a" 2>/dev/null)
   result=$?
 
   local expected=1  # fail
@@ -51,7 +51,7 @@ test_assertEqual_int_and_str() {
 }
 
 test_assertEqual_int_and_empty_str() {
-  result=$(assertEqual 0 "")
+  result=$(assertEqual 0 "" 2>/dev/null)
   result=$?
 
   local expected=1  # fail
@@ -65,7 +65,7 @@ test_assertEqual_int_and_empty_str() {
 #
 
 test_assertNotEqual_equal_ints() {
-  result=$(assertNotEqual 0 0)
+  result=$(assertNotEqual 0 0 2>/dev/null)
   result=$?
 
   local expected=1  # fail
@@ -83,7 +83,7 @@ test_assertNotEqual_unequal_ints() {
 }
 
 test_assertNotEqual_equal_str() {
-  result=$(assertNotEqual "a" "a")
+  result=$(assertNotEqual "a" "a" 2>/dev/null)
   result=$?
 
   local expected=1  # fail
@@ -124,7 +124,7 @@ test_assertNotEqual_int_and_empty_str() {
 #
 
 test_assertTrue_empty_str() {
-  result=$(assertTrue "")
+  result=$(assertTrue "" 2>/dev/null)
   result=$?
 
   local expected=1  # fail
@@ -142,7 +142,7 @@ test_assertTrue_str() {
 }
 
 test_assertTrue_zero() {
-  result=$(assertTrue 0)
+  result=$(assertTrue 0 2>/dev/null)
   result=$?
 
   local expected=1  # fail
@@ -201,7 +201,7 @@ test_assertFalse_empty_str() {
 }
 
 test_assertFalse_str() {
-  result=$(assertFalse "test")
+  result=$(assertFalse "test" 2>/dev/null)
   result=$?
 
   local expected=1  # fail
@@ -219,7 +219,7 @@ test_assertFalse_zero() {
 }
 
 test_assertFalse_small_negative_int() {
-  result=$(assertFalse -1)
+  result=$(assertFalse -1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -228,7 +228,7 @@ test_assertFalse_small_negative_int() {
 }
 
 test_assertFalse_large_negative_int() {
-  result=$(assertFalse -1000)
+  result=$(assertFalse -1000 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -237,7 +237,7 @@ test_assertFalse_large_negative_int() {
 }
 
 test_assertFalse_small_positive_int() {
-  result=$(assertFalse 1)
+  result=$(assertFalse 1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -246,7 +246,7 @@ test_assertFalse_small_positive_int() {
 }
 
 test_assertFalse_large_positive_int() {
-  result=$(assertFalse 1000)
+  result=$(assertFalse 1000 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -280,7 +280,7 @@ test_assertRaises_error() {
 }
 
 test_assertRaises_empty_string() {
-  result=$(assertRaises "" 0)
+  result=$(assertRaises "" 0 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -289,7 +289,7 @@ test_assertRaises_empty_string() {
 }
 
 test_assertRaises_string() {
-  result=$(assertRaises "a" 0)
+  result=$(assertRaises "a" 0 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -298,7 +298,7 @@ test_assertRaises_string() {
 }
 
 test_assertRaises_two_empty_strings() {
-  result=$(assertRaises "" "")
+  result=$(assertRaises "" "" 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -321,7 +321,7 @@ test_assertGreater_positives() {
 }
 
 test_assertGreater_positives_not_greater() {
-  result=$(assertGreater 0 1)
+  result=$(assertGreater 0 1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -330,7 +330,7 @@ test_assertGreater_positives_not_greater() {
 }
 
 test_assertGreater_positives_equal() {
-  result=$(assertGreater 1 1)
+  result=$(assertGreater 1 1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -348,7 +348,7 @@ test_assertGreater_negatives() {
 }
 
 test_assertGreater_negatives_not_greater() {
-  result=$(assertGreater -2 -1)
+  result=$(assertGreater -2 -1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -357,7 +357,7 @@ test_assertGreater_negatives_not_greater() {
 }
 
 test_assertGreater_negatives_equal() {
-  result=$(assertGreater -1 -1)
+  result=$(assertGreater -1 -1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -375,7 +375,7 @@ test_assertGreater_mixed() {
 }
 
 test_assertGreater_mixed_not_greater() {
-  result=$(assertGreater -1 1)
+  result=$(assertGreater -1 1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -402,7 +402,7 @@ xtest_assertGreater_than_string() {
 }
 
 test_assertGreater_two_strings() {
-  result=$(assertGreater "a" "a")  # (str => int) == 0
+  result=$(assertGreater "a" "a" 2>/dev/null)  # (str => int) == 0
   result=$?
 
   local expected=1 # fail
@@ -411,7 +411,7 @@ test_assertGreater_two_strings() {
 }
 
 test_assertGreater_two_empty_strings() {
-  result=$(assertGreater "" "")  # (str => int) == 0
+  result=$(assertGreater "" "" 2>/dev/null)  # (str => int) == 0
   result=$?
 
   local expected=1 # fail
@@ -433,7 +433,7 @@ test_assertGreaterEqual_positives() {
 }
 
 test_assertGreaterEqual_positives_not_greater() {
-  result=$(assertGreaterEqual 0 1)
+  result=$(assertGreaterEqual 0 1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -442,7 +442,7 @@ test_assertGreaterEqual_positives_not_greater() {
 }
 
 test_assertGreaterEqual_positives_equal() {
-  result=$(assertGreaterEqual 1 1)
+  result=$(assertGreaterEqual 1 1 2>/dev/null)
   result=$?
 
   local expected=0 # pass
@@ -460,7 +460,7 @@ test_assertGreaterEqual_negatives() {
 }
 
 test_assertGreaterEqual_negatives_not_greater() {
-  result=$(assertGreaterEqual -2 -1)
+  result=$(assertGreaterEqual -2 -1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -487,7 +487,7 @@ test_assertGreaterEqual_mixed() {
 }
 
 test_assertGreaterEqual_mixed_not_greater() {
-  result=$(assertGreaterEqual -1 1)
+  result=$(assertGreaterEqual -1 1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -523,7 +523,7 @@ xtest_assertGreaterEqual_two_strings() {
 }
 
 test_assertGreaterEqual_two_empty_strings() {
-  result=$(assertGreaterEqual "" "")  # (str => int) == 0
+  result=$(assertGreaterEqual "" "" 2>/dev/null)  # (str => int) == 0
   result=$?
 
   local expected=1 # fail
@@ -546,7 +546,7 @@ test_assertLess_positives() {
 }
 
 test_assertLess_positives_not_less() {
-  result=$(assertLess 1 0)
+  result=$(assertLess 1 0 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -555,7 +555,7 @@ test_assertLess_positives_not_less() {
 }
 
 test_assertLess_positives_equal() {
-  result=$(assertLess 1 1)
+  result=$(assertLess 1 1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -573,7 +573,7 @@ test_assertLess_negatives() {
 }
 
 test_assertLess_negatives_not_less() {
-  result=$(assertLess -1 -2)
+  result=$(assertLess -1 -2 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -582,7 +582,7 @@ test_assertLess_negatives_not_less() {
 }
 
 test_assertLess_negatives_equal() {
-  result=$(assertLess -1 -1)
+  result=$(assertLess -1 -1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -600,7 +600,7 @@ test_assertLess_mixed() {
 }
 
 test_assertLess_mixed_not_less() {
-  result=$(assertLess 1 -1)
+  result=$(assertLess 1 -1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -636,7 +636,7 @@ xtest_assertLess_two_strings() {
 }
 
 test_assertLess_two_empty_strings() {
-  result=$(assertLess "" "")  # (str => int) == 0
+  result=$(assertLess "" "" 2>/dev/null)  # (str => int) == 0
   result=$?
 
   local expected=1 # fail
@@ -659,7 +659,7 @@ test_assertLessEqual_positives() {
 }
 
 test_assertLessEqual_positives_not_less() {
-  result=$(assertLessEqual 1 0)
+  result=$(assertLessEqual 1 0 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -686,7 +686,7 @@ test_assertLessEqual_negatives() {
 }
 
 test_assertLessEqual_negatives_not_less() {
-  result=$(assertLessEqual -1 -2)
+  result=$(assertLessEqual -1 -2 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -713,7 +713,7 @@ test_assertLessEqual_mixed() {
 }
 
 test_assertLessEqual_mixed_not_less() {
-  result=$(assertLessEqual 1 -1)
+  result=$(assertLessEqual 1 -1 2>/dev/null)
   result=$?
 
   local expected=1 # fail
@@ -749,7 +749,7 @@ xtest_assertLessEqual_two_strings() {
 }
 
 test_assertLessEqual_two_empty_strings() {
-  result=$(assertLessEqual "" "")  # (str => int) == 0
+  result=$(assertLessEqual "" "" 2>/dev/null)  # (str => int) == 0
   result=$?
 
   local expected=1 # fail

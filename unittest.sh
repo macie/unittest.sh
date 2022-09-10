@@ -216,7 +216,7 @@ ut__test_debug_info() {
     # _current_testcase
     # prefix: UT1c0_
     if [ -t 2 ]; then
-        printf '\x1b[34m-- %s [%s]\x1b[0m\n\n' "$1" "${_current_testsuite}:${_current_testcase}" >&2
+        printf '\n\x1b[34m-- %s [%s]\x1b[0m\n\n' "$1" "${_current_testsuite}:${_current_testcase}" >&2
     else  # stderr is not interactive terminal, so color is useless
         printf '-- %s [%s]\n\n' "$1" "${_current_testsuite}:${_current_testcase}" >&2
     fi
@@ -239,12 +239,14 @@ test() {
         1)
             ut__test_debug_info 'FAILED TEST' \
                 "I expected 'test $*' to be true, but the result was false."
+            _assert_failed=1
             return 1
             ;;
         *)
             ut__test_debug_info 'INVALID ASSERTION' \
                 "I tried to check 'test $*', but I got error with message: '${UT4e1_test_error_msg}'. Did you use proper operator?" \
                 "Hint: Some operators requires specific type of values. Read 'man test' to learn more."
+            _assert_failed=1
             return 1
             ;;
     esac
@@ -260,7 +262,9 @@ assertEqual() {
   if [ "${result}" = "${expected}" ]; then
     return 0
   else
-    ut__create_fail_message "assertEqual" "${result}" "${expected}"
+    ut__test_debug_info 'FAILED TEST' \
+        "I expected 'assertEqual $*' to be true, but the result was false."
+    _assert_failed=1
     return 1
   fi
 }
@@ -273,7 +277,9 @@ assertNotEqual() {
   if [ "${result}" != "${expected}" ]; then
     return 0
   else
-    ut__create_fail_message "assertNotEqual" "${result}" "not ${expected}"
+    ut__test_debug_info 'FAILED TEST' \
+        "I expected 'assertNotEqual $*' to be true, but the result was false."
+    _assert_failed=1
     return 1
   fi
 }
@@ -287,7 +293,9 @@ assertTrue() {
        && [ "${result}" ]; then
     return 0
   else
-    ut__create_fail_message "assertTrue" "${result}" "1"
+    ut__test_debug_info 'FAILED TEST' \
+        "I expected 'assertTrue $*' to be true, but the result was false."
+    _assert_failed=1
     return 1
   fi
 }
@@ -301,7 +309,9 @@ assertFalse() {
       || [ ! "${result}" ]; then
     return 0
   else
-    ut__create_fail_message "assertFalse" "${result}" "0"
+    ut__test_debug_info 'FAILED TEST' \
+        "I expected 'assertFalse $*' to be true, but the result was false."
+    _assert_failed=1
     return 1
   fi
 }
@@ -315,7 +325,9 @@ assertRaises() {
       && [ "${result}" = "${expected}" ]; then
     return 0
   else
-    ut__create_fail_message "assertRaises" "${result}" "${expected}"
+    ut__test_debug_info 'FAILED TEST' \
+        "I expected 'assertRaises $*' to be true, but the result was false."
+    _assert_failed=1
     return 1
   fi
 }
@@ -331,7 +343,9 @@ assertGreater() {
       && [ ${result} -gt ${expected} ]; then
     return 0
   else
-    ut__create_fail_message "assertGreater" "${result}" "> ${expected}"
+    ut__test_debug_info 'FAILED TEST' \
+        "I expected 'assertGreater $*' to be true, but the result was false."
+    _assert_failed=1
     return 1
   fi
 }
@@ -347,7 +361,9 @@ assertGreaterEqual() {
       && [ ${result} -ge ${expected} ]; then
     return 0
   else
-    ut__create_fail_message "assertGreaterEqual" "${result}" ">= ${expected}"
+    ut__test_debug_info 'FAILED TEST' \
+        "I expected 'assertGreaterEqual $*' to be true, but the result was false."
+    _assert_failed=1
     return 1
   fi
 }
@@ -363,7 +379,9 @@ assertLess() {
       && [ ${result} -lt ${expected} ]; then
     return 0
   else
-    ut__create_fail_message "assertLess" "${result}" "< ${expected}"
+    ut__test_debug_info 'FAILED TEST' \
+        "I expected 'assertLess $*' to be true, but the result was false."
+    _assert_failed=1
     return 1
   fi
 }
@@ -379,7 +397,9 @@ assertLessEqual() {
       && [ ${result} -le ${expected} ]; then
     return 0
   else
-    ut__create_fail_message "assertLessEqual" "${result}" "<= ${expected}"
+    ut__test_debug_info 'FAILED TEST' \
+        "I expected 'assertLessEqual $*' to be true, but the result was false."
+    _assert_failed=1
     return 1
   fi
 }
