@@ -145,68 +145,23 @@ ut__create_fail_message() {
  ")"
 }
 
-ut__fail_indicator() {
-  #
-  # Fail indicator.
-  #
-  # Globals:
-  #     _verbosity (int) - Verbosity level.
-  #
-  # Arguments:
-  #     None.
-  #
-  # Returns:
-  #     None.
-  #
-  if [ "${_verbosity}" = "0" ]; then  # quiet verbosity
-    return 0
-  elif [ "${_verbosity}" = "2" ]; then
-    echo 'FAIL'
-  else  # normal verbosity
-    echo -n 'F'
-  fi
-}
+ut__test_result() {
+    # Write test status message to stdout
+    # $1 - test location
+    # $2 - test status
+    # prefix: UTfe0_
+    if [ ! -t 1 ]; then  # standard output is not terminal
+        printf '%s\t%s\n' "$1" "$2"
+        return 0
+    fi
 
-ut__pass_indicator() {
-  #
-  # Pass indicator.
-  #
-  # Globals:
-  #     _verbosity (int) - Verbosity level.
-  #
-  # Arguments:
-  #     None.
-  #
-  # Returns:
-  #     None.
-  #
-  if [ "${_verbosity}" = "0" ]; then  # quiet verbosity
+    case $2 in
+        PASS)  printf '%s\t\x1b[32m%s\x1b[0m\n' "$1" "$2" ;;     # default location; green status
+        FAIL)  printf '\x1b[31m%s\t\x1b[97;41m%s\x1b[0m\n' "$1" "$2" ;;  # red location; white on red status
+        SKIP)  printf '\x1b[90m%s\t%s\x1b[0b\n' "$1" "$2" ;;     # gray location and status
+        *)     printf '%s\t\%s\n' "$1" "$2" ;;
+    esac
     return 0
-  elif [ "${_verbosity}" = "2" ]; then
-    echo 'ok'
-  else  # normal verbosity
-    echo -n '.'
-  fi
-}
-
-ut__testcase_indicator() {
-  #
-  # Pass indicator.
-  #
-  # Globals:
-  #     _current_testcase (str) - Current test case name.
-  #     _current_testsuite (str) - Current test suite name.
-  #     _verbosity (int) - Verbosity level.
-  #
-  # Arguments:
-  #     None.
-  #
-  # Returns:
-  #     None.
-  #
-  if [ "${_verbosity}" = "2" ]; then
-    echo -n "${_current_testcase} (${_current_testsuite}) ... "
-  fi
 }
 
 ut__test_debug_info() {
@@ -572,8 +527,6 @@ ut__before_test() {
   #     None.
   #
   _assert_failed=0
-
-  ut__testcase_indicator
 }
 
 ut__after_test() {
@@ -594,10 +547,10 @@ ut__after_test() {
   _tests_run=$(( ${_tests_run} + 1 ))
 
   if [ ${_assert_failed} -eq 1 ]; then
-    ut__fail_indicator
+    ut__test_result "${_current_testsuite}:${_current_testcase}" "FAIL"
     _tests_failed=$(( ${_tests_failed} + 1 ))
   else
-    ut__pass_indicator
+    ut__test_result "${_current_testsuite}:${_current_testcase}" "PASS"
   fi
 }
 
