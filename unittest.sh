@@ -114,7 +114,7 @@ ut__test_result() {
         PASS)  printf '%s\t\x1b[32m%s\x1b[0m\n' "$1" "$2" ;;     # default location; green status
         FAIL)  printf '\x1b[31m%s\t\x1b[97;41m%s\x1b[0m\n' "$1" "$2" ;;  # red location; white on red status
         SKIP)  printf '\x1b[90m%s\t%s\x1b[0b\n' "$1" "$2" ;;     # gray location and status
-        *)     printf '%s\t\%s\n' "$1" "$2" ;;
+        *)     printf '%s\t%s\n' "$1" "$2" ;;
     esac
     return 0
 }
