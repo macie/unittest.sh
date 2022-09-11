@@ -22,10 +22,6 @@ _test_dir=''
 _test_files=''
 
 _assert_failed=0
-_tests_run=0
-_tests_failed=0
-_fail_messages=''
-_tests_starttime=''
 _current_testcase=''
 _current_testsuite=''
 
@@ -102,47 +98,6 @@ ut__error_message() {
   fi
 
   echo "Error: ${msg}." 1>&2
-}
-
-ut__create_fail_message() {
-  #
-  # Creates fail message.
-  #
-  # Globals:
-  #     _assert_failed (int) - Flag shows if assert is failed.
-  #     _current_testcase (str) - Current test case name.
-  #     _current_testsuite (str) - Current test suite name.
-  #     _fail_messages (str) - 
-  #
-  # Arguments:
-  #     name (str) - Assert name.
-  #     result (str) -
-  #     expected (str) - Expected result.
-  #
-  # Returns:
-  #     None.
-  #
-  local name
-  local result
-  local expected
-  name="$1"
-  result="$2"
-  expected="$3"
-
-  if [ "${_assert_failed}" = "0" ]; then
-    _fail_messages="${_fail_messages}$(printf "
-======================================================================
- FAIL: ${_current_testcase} (${_current_testsuite})
-----------------------------------------------------------------------
-")"
-    _assert_failed=1
-  fi
-
-  _fail_messages="${_fail_messages}$(printf "
--> ${name} failed
-   expected: ${expected}
-   got: ${result}
- ")"
 }
 
 ut__test_result() {
@@ -462,150 +417,42 @@ ut__autodiscovery() {
   _test_files="$(find "${_test_dir}" -name 'test_*.sh')"
 }
 
-ut__start() {
-  #
-  # Runs instruction before all tests.
-  #
-  # Globals:
-  #     _tests_starttime (str) - Start time of tests (in seconds).
-  #
-  # Arguments:
-  #     None.
-  #
-  # Returns:
-  #     None.
-  #
-  _tests_starttime="$(date +%s)"  # seconds_since_epoch
-}
-
-ut__stop() {
-  #
-  # Runs instruction after all tests.
-  #
-  # Globals:
-  #     _tests_starttime (str) - Start time of tests (in seconds).
-  #     _tests_run (int) - Number of tests.
-  #     _tests_failed (int) - Number of failed tests.
-  #
-  # Arguments:
-  #     None.
-  #
-  # Returns:
-  #     None.
-  #
-  local end_status=""
-  local tests_endtime="$(date +%s)"    # seconds_since_epoch
-  # required visible decimal place for seconds (leading zeros if needed)
-  local tests_time="$(( ${tests_endtime} - ${_tests_starttime} ))"
-
-  if [ ${_tests_failed} -gt 0 ]; then
-    printf "${_fail_messages}"
-    end_status="FAILED (failures=${_tests_failed})"
-  else
-    end_status='OK'
-  fi
-
-  printf "
-----------------------------------------------------------------------
-Ran ${_tests_run} tests in ${tests_time}s
-
-${end_status}
-"
-}
-
-ut__before_test() {
-  #
-  # Runs instruction before each test function.
-  #
-  # Globals:
-  #     _assert_failed (int) - Flag shows if assert is failed.
-  #
-  # Arguments:
-  #     None.
-  #
-  # Returns:
-  #     None.
-  #
-  _assert_failed=0
-}
-
-ut__after_test() {
-  #
-  # Runs instruction after each test function.
-  #
-  # Globals:
-  #     _assert_failed (int) - Flag shows if assert is failed.
-  #     _tests_failed (int) - Number of failed tests.
-  #     _tests_run (int) - Number of tests.
-  #
-  # Arguments:
-  #     None.
-  #
-  # Returns:
-  #     None.
-  #
-  _tests_run=$(( ${_tests_run} + 1 ))
-
-  if [ ${_assert_failed} -eq 1 ]; then
-    ut__test_result "${_current_testsuite}:${_current_testcase}" "FAIL"
-    _tests_failed=$(( ${_tests_failed} + 1 ))
-  else
-    ut__test_result "${_current_testsuite}:${_current_testcase}" "PASS"
-  fi
-}
-
 ut__testrunner() {
-  #
-  # Runs tests.
-  #
-  # Globals:
-  #     None.
-  #
-  # Arguments:
-  #     None.
-  #
-  # Returns:
-  #     None.
-  #
+    # prefix: utt8r_
 
-  ut__start
+    utt8r_exit_code=0
+    for utt8r_testfile in ${_test_files}; do
+        _current_testsuite="${utt8r_testfile#"$(pwd)/"}"
+        (
+            utt8r_beforeEach=$(grep -o "^[ \t]*setUp" ${utt8r_testfile})
+            utt8r_afterEach=$(grep -o "^[ \t]*tearDown" ${utt8r_testfile})
+            utt8r_tests=$(grep -o "^[ \t]*test_[^\(]*" ${utt8r_testfile})
 
-  for testfile in ${_test_files}; do
+            utt8r_testsuite_exit_code=0
 
-    _current_testsuite="${testfile#"$(pwd)/"}"
+            . ${utt8r_testfile}
+            for _current_testcase in ${utt8r_tests}; do
+                _assert_failed=0
 
-    . ${testfile}
-    local setup=$(grep -o "^[ \t]*setUp" ${testfile})
-    local teardown=$(grep -o "^[ \t]*tearDown" ${testfile})
-    local test_suite=$(grep -o "^[ \t]*test_[^\(]*" ${testfile})
+                ${utt8r_beforeEach}
+                ${_current_testcase}
+                ${utt8r_afterEach}
 
-    for test_case in ${test_suite}; do
+                if [ ${_assert_failed} -eq 0 ]; then
+                    utt8r_test_status='PASS'
+                else
+                    utt8r_test_status='FAIL'
+                    utt8r_testsuite_exit_code=1
+                fi
+                ut__test_result "${_current_testsuite}:${_current_testcase}" "${utt8r_test_status}"
+            done
 
-      _current_testcase="${test_case}"
-      ut__before_test
-      ${setup}
-
-      ${test_case}
-
-      ${teardown}
-      ut__after_test
-
-      # reset test_case
-      if [ "${test_case}" != "" ]; then
-        unset -f ${test_case}
-      fi
+            exit ${utt8r_testsuite_exit_code}
+        )
+        utt8r_exit_code=$(( $? || ${utt8r_exit_code} ))
     done
 
-    # reset setup and teardown
-    if [ "${setup}" != "" ]; then
-      unset -f ${setup}
-    fi
-    if [ "${teardown}" != "" ]; then
-      unset -f ${teardown}
-    fi
-  done
-
-  ut__stop
+    return ${utt8r_exit_code}
 }
 
 
@@ -613,12 +460,9 @@ ut__testrunner() {
 #   MAIN ROUTINE
 #
 
-ut__main () {
+{
   ut__parse_args "$@"
   ut__autodiscovery
   ut__testrunner
-
-  exit 0
+  exit $?
 }
-
-ut__main "$@"
