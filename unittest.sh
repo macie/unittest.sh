@@ -109,7 +109,7 @@ ut__test_result() {
     utt9t_color_location=''
     utt9t_color_status=''
 
-    if [ -t 1 ]; then  # stdout is interactive terminal
+    if [ -t 1 ] && [ -z "${NO_COLOR}" ]; then  # stdout is interactive terminal
         utt9t_color_default='\033[0m'
         case $2 in
             PASS)  # location: default; status: green
@@ -142,7 +142,7 @@ ut__test_debug_info() {
     utt13o_color=''
     utt13o_color_default=''
 
-    if [ -t 2 ]; then  # stderr is interactive terminal
+    if [ -t 2 ] && [ -z "${NO_COLOR}" ]; then  # stderr is interactive terminal
         utt13o_color='\033[34m'  # blue
         utt13o_color_default='\033[0m'
     fi
@@ -482,8 +482,12 @@ ut__testrunner() {
 #
 
 {
-  ut__parse_args "$@"
-  ut__autodiscovery
-  ut__testrunner
-  exit $?
+    # color output by default: on supported terminals when NO_COLOR is not set
+    if [ -z "${NO_COLOR}" ] && [ $(tput colors) -lt 8 ]; then
+        NO_COLOR='YES'
+    fi
+    ut__parse_args "$@"
+    ut__autodiscovery
+    ut__testrunner
+    exit $?
 }
