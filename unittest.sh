@@ -104,18 +104,32 @@ ut__test_result() {
     # Write test status message to stdout
     # $1 - test location
     # $2 - test status
-    # prefix: UTfe0_
-    if [ ! -t 1 ]; then  # standard output is not terminal
-        printf '%s\t%s\n' "$1" "$2"
-        return 0
+    # prefix: utt9t_
+    utt9t_color_default=''
+    utt9t_color_location=''
+    utt9t_color_status=''
+
+    if [ -t 1 ]; then  # stdout is interactive terminal
+        utt9t_color_default='\033[0m'
+        case $2 in
+            PASS)  # location: default; status: green
+                utt9t_color_location='\033[0m'
+                utt9t_color_status='\033[32m'
+                ;;
+            FAIL)  # location: red; status: white on red
+                utt9t_color_location='\033[31m'
+                utt9t_color_status='\033[97;41m'
+                ;;
+            SKIP)  # location: gray; status: gray
+                utt9t_color_location='\033[90m'
+                utt9t_color_status='\033[90m'
+                ;;
+        esac
     fi
 
-    case $2 in
-        PASS)  printf '%s\t\x1b[32m%s\x1b[0m\n' "$1" "$2" ;;     # default location; green status
-        FAIL)  printf '\x1b[31m%s\t\x1b[97;41m%s\x1b[0m\n' "$1" "$2" ;;  # red location; white on red status
-        SKIP)  printf '\x1b[90m%s\t%s\x1b[0b\n' "$1" "$2" ;;     # gray location and status
-        *)     printf '%s\t%s\n' "$1" "$2" ;;
-    esac
+    printf "${utt9t_color_location}%s\t${utt9t_color_status}%s${utt9t_color_default}\n" "$1" "$2"
+
+    unset -v utt9t_color_default utt9t_color_location utt9t_color_status
     return 0
 }
 
@@ -124,17 +138,24 @@ ut__test_debug_info() {
     # $2-... - paragraphs
     # _current_testsuite
     # _current_testcase
-    # prefix: UT1c0_
-    if [ -t 2 ]; then
-        printf '\n\x1b[34m-- %s [%s]\x1b[0m\n\n' "$1" "${_current_testsuite}:${_current_testcase}" >&2
-    else  # stderr is not interactive terminal, so color is useless
-        printf '-- %s [%s]\n\n' "$1" "${_current_testsuite}:${_current_testcase}" >&2
+    # prefix: utt13o_
+    utt13o_color=''
+    utt13o_color_default=''
+
+    if [ -t 2 ]; then  # stderr is interactive terminal
+        utt13o_color='\033[34m'  # blue
+        utt13o_color_default='\033[0m'
     fi
+
+    printf "\n${utt13o_color}-- %s [%s]${utt13o_color_default}\n\n" "$1" "${_current_testsuite}:${_current_testcase}" >&2
+
     shift 1
-    for UT1c0_paragraph in "$@"; do
-        printf '%s\n\n' "${UT1c0_paragraph}" >&2
+    for utt13o_paragraph in "$@"; do
+        printf '%s\n\n' "${utt13o_paragraph}" >&2
     done
-    unset -v UT1c0_paragraph
+
+    unset -v utt13o_paragraph utt13o_color utt13o_color_default
+    return 0
 }
 
 #
