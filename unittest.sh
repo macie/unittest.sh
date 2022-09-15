@@ -21,10 +21,6 @@ _verbosity=1  # normal verbosity
 _test_dir=''
 _test_files=''
 
-_assert_failed=0
-_current_testcase=''
-_current_testsuite=''
-
 
 #
 #   MESSAGES
@@ -136,8 +132,6 @@ ut__test_result() {
 ut__test_debug_info() {
     # $1 - category
     # $2-... - paragraphs
-    # _current_testsuite
-    # _current_testcase
     # prefix: utt13o_
     utt13o_color=''
     utt13o_color_default=''
@@ -147,7 +141,7 @@ ut__test_debug_info() {
         utt13o_color_default='\033[0m'
     fi
 
-    printf "\n${utt13o_color}-- %s [%s]${utt13o_color_default}\n\n" "$1" "${_current_testsuite}:${_current_testcase}" >&2
+    printf "\n${utt13o_color}-- %s${utt13o_color_default}\n\n" "$1" >&2
 
     shift 1
     for utt13o_paragraph in "$@"; do
@@ -168,16 +162,16 @@ test() {
     case $? in
         0)  ;;
         1)
-            ut__test_debug_info 'FAILED TEST' \
+            ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
                 "I expected 'test $*' to be true, but the result was false."
-            _assert_failed=1
+            UNITTEST_CURRENT_STATUS=1
             return 1
             ;;
         *)
-            ut__test_debug_info 'INVALID ASSERTION' \
+            ut__test_debug_info "INVALID ASSERTION [${UNITTEST_CURRENT}]" \
                 "I tried to check 'test $*', but I got error with message: '${UT4e1_test_error_msg}'. Did you use proper operator?" \
                 "Hint: Some operators requires specific type of values. Read 'man test' to learn more."
-            _assert_failed=1
+            UNITTEST_CURRENT_STATUS=1
             return 1
             ;;
     esac
@@ -193,9 +187,9 @@ assertEqual() {
   if [ "${result}" = "${expected}" ]; then
     return 0
   else
-    ut__test_debug_info 'FAILED TEST' \
+    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertEqual $*' to be true, but the result was false."
-    _assert_failed=1
+    UNITTEST_CURRENT_STATUS=1
     return 1
   fi
 }
@@ -208,9 +202,9 @@ assertNotEqual() {
   if [ "${result}" != "${expected}" ]; then
     return 0
   else
-    ut__test_debug_info 'FAILED TEST' \
+    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertNotEqual $*' to be true, but the result was false."
-    _assert_failed=1
+    UNITTEST_CURRENT_STATUS=1
     return 1
   fi
 }
@@ -224,9 +218,9 @@ assertTrue() {
        && [ "${result}" ]; then
     return 0
   else
-    ut__test_debug_info 'FAILED TEST' \
+    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertTrue $*' to be true, but the result was false."
-    _assert_failed=1
+    UNITTEST_CURRENT_STATUS=1
     return 1
   fi
 }
@@ -240,9 +234,9 @@ assertFalse() {
       || [ ! "${result}" ]; then
     return 0
   else
-    ut__test_debug_info 'FAILED TEST' \
+    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertFalse $*' to be true, but the result was false."
-    _assert_failed=1
+    UNITTEST_CURRENT_STATUS=1
     return 1
   fi
 }
@@ -256,9 +250,9 @@ assertRaises() {
       && [ "${result}" = "${expected}" ]; then
     return 0
   else
-    ut__test_debug_info 'FAILED TEST' \
+    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertRaises $*' to be true, but the result was false."
-    _assert_failed=1
+    UNITTEST_CURRENT_STATUS=1
     return 1
   fi
 }
@@ -274,9 +268,9 @@ assertGreater() {
       && [ ${result} -gt ${expected} ]; then
     return 0
   else
-    ut__test_debug_info 'FAILED TEST' \
+    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertGreater $*' to be true, but the result was false."
-    _assert_failed=1
+    UNITTEST_CURRENT_STATUS=1
     return 1
   fi
 }
@@ -292,9 +286,9 @@ assertGreaterEqual() {
       && [ ${result} -ge ${expected} ]; then
     return 0
   else
-    ut__test_debug_info 'FAILED TEST' \
+    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertGreaterEqual $*' to be true, but the result was false."
-    _assert_failed=1
+    UNITTEST_CURRENT_STATUS=1
     return 1
   fi
 }
@@ -310,9 +304,9 @@ assertLess() {
       && [ ${result} -lt ${expected} ]; then
     return 0
   else
-    ut__test_debug_info 'FAILED TEST' \
+    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertLess $*' to be true, but the result was false."
-    _assert_failed=1
+    UNITTEST_CURRENT_STATUS=1
     return 1
   fi
 }
@@ -328,9 +322,9 @@ assertLessEqual() {
       && [ ${result} -le ${expected} ]; then
     return 0
   else
-    ut__test_debug_info 'FAILED TEST' \
+    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertLessEqual $*' to be true, but the result was false."
-    _assert_failed=1
+    UNITTEST_CURRENT_STATUS=1
     return 1
   fi
 }
@@ -432,7 +426,7 @@ ut__autodiscovery() {
   #     testfiles (str) - Files with tests.
   #
   if [ "${_test_dir}" = '' ]; then
-    _test_dir=$(find $(pwd)/ -type d -name 'tests' -print)
+    _test_dir=$(find ./ -type d -name 'tests' -print)
   fi
 
   _test_files="$(find "${_test_dir}" -name 'test_*.sh')"
@@ -441,39 +435,35 @@ ut__autodiscovery() {
 ut__testrunner() {
     # prefix: utt8r_
 
-    utt8r_exit_code=0
+    UNITTEST_STATUS=0
     for utt8r_testfile in ${_test_files}; do
-        _current_testsuite="${utt8r_testfile#"$(pwd)/"}"
         (
             utt8r_beforeEach=$(grep -o "^[ \t]*setUp" ${utt8r_testfile})
             utt8r_afterEach=$(grep -o "^[ \t]*tearDown" ${utt8r_testfile})
             utt8r_tests=$(grep -o "^[ \t]*test_[^\(]*" ${utt8r_testfile})
 
-            utt8r_testsuite_exit_code=0
-
             . ${utt8r_testfile}
             for _current_testcase in ${utt8r_tests}; do
-                _assert_failed=0
+                UNITTEST_CURRENT="${utt8r_testfile#./}:${_current_testcase}"
+                UNITTEST_CURRENT_STATUS=0
 
                 ${utt8r_beforeEach}
                 ${_current_testcase}
                 ${utt8r_afterEach}
 
-                if [ ${_assert_failed} -eq 0 ]; then
-                    utt8r_test_status='PASS'
+                if [ ${UNITTEST_CURRENT_STATUS} -eq 0 ]; then
+                    ut__test_result "${UNITTEST_CURRENT}" 'PASS'
                 else
-                    utt8r_test_status='FAIL'
-                    utt8r_testsuite_exit_code=1
+                    UNITTEST_STATUS=1
+                    ut__test_result "${UNITTEST_CURRENT}" 'FAIL'
                 fi
-                ut__test_result "${_current_testsuite}:${_current_testcase}" "${utt8r_test_status}"
             done
-
-            exit ${utt8r_testsuite_exit_code}
+            unset -v UNITTEST_CURRENT UNITTEST_CURRENT_STATUS
+            exit ${UNITTEST_STATUS}
         )
-        utt8r_exit_code=$(( $? || ${utt8r_exit_code} ))
+        UNITTEST_STATUS=$?
     done
-
-    return ${utt8r_exit_code}
+    return ${UNITTEST_STATUS}
 }
 
 
