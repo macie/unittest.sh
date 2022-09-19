@@ -438,11 +438,14 @@ ut__testrunner() {
     UNITTEST_STATUS=0
     for utt8r_testfile in ${_test_files}; do
         (
+            utt8r_beforeAll=$(grep -o "^[ \t]*beforeAll" ${utt8r_testfile})
+            utt8r_afterAll=$(grep -o "^[ \t]*afterAll" ${utt8r_testfile})
             utt8r_beforeEach=$(grep -o "^[ \t]*setUp" ${utt8r_testfile})
             utt8r_afterEach=$(grep -o "^[ \t]*tearDown" ${utt8r_testfile})
             utt8r_tests=$(grep -o "^[ \t]*test_[^\(]*" ${utt8r_testfile})
 
             . ${utt8r_testfile}
+            ${utt8r_beforeAll}
             for _current_testcase in ${utt8r_tests}; do
                 UNITTEST_CURRENT="${utt8r_testfile#./}:${_current_testcase}"
                 UNITTEST_CURRENT_STATUS=0
@@ -458,6 +461,7 @@ ut__testrunner() {
                     ut__test_result "${UNITTEST_CURRENT}" 'FAIL'
                 fi
             done
+            ${utt8r_afterAll}
             unset -v UNITTEST_CURRENT UNITTEST_CURRENT_STATUS
             exit ${UNITTEST_STATUS}
         )
