@@ -14,10 +14,9 @@ Unit testing framework for shell scripts.
 
 * assertions: call `test` function (same usage as unix `test` command)
 
-* functions `setUp()` and `tearDown()` are run before/after each test
-
 * functions `beforeAll()` and `afterAll()` are run before/after all tests in file
 
+* functions `beforeEach()` and `afterEach()` are run before/after each test (`setUp()` and `tearDown()` are deprecated and will be removed in next version)
 
 ### Deprecated assertions
 

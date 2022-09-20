@@ -492,8 +492,8 @@ ut__testrunner() {
         (
             utt8r_beforeAll=$(grep -o "^[ \t]*beforeAll" ${utt8r_testfile})
             utt8r_afterAll=$(grep -o "^[ \t]*afterAll" ${utt8r_testfile})
-            utt8r_beforeEach=$(grep -o "^[ \t]*setUp" ${utt8r_testfile})
-            utt8r_afterEach=$(grep -o "^[ \t]*tearDown" ${utt8r_testfile})
+            utt8r_beforeEach=$(grep -Eo "^[ \t]*(setUp|beforeEach)" ${utt8r_testfile})
+            utt8r_afterEach=$(grep -Eo "^[ \t]*(tearDown|afterEach)" ${utt8r_testfile})
             utt8r_tests=$(grep -o "^[ \t]*test_[^\(]*" ${utt8r_testfile})
 
             . ${utt8r_testfile}
