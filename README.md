@@ -5,6 +5,20 @@
 
 Unit testing framework for shell scripts.
 
+## Install
+
+Using `curl`:
+```bash
+curl -fLO https://raw.githubusercontent.com/macie/unittest.sh/master/unittest.sh
+chmod +x unittest.sh
+```
+
+or with `wget`:
+
+```bash
+wget https://raw.githubusercontent.com/macie/unittest.sh/master/unittest.sh
+chmod +x unittest.sh
+```
 
 ## Cheat sheet
 
