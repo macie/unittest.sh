@@ -1,7 +1,6 @@
 #!/bin/sh
 
 beforeAll() {
-    . ../unittest.sh
     find() {  # find mock
         case "$1" in
             'error')  echo "$1" >&2; return 1 ;;
