@@ -14,29 +14,16 @@ afterAll() {
 }
 
 test_tests_directory() {
-   result=$(ut__test_directory './' 2>&1)
+   result=$(ut__test_files 'some_dir/' 2>&1)
 
    test $? -eq 0
-   test "${result}" = './'
+   test "${result}" = 'some_dir/'
 }
 
 test_invalid_tests_directory() {
-   result=$(ut__test_directory 'error' 2>&1)
-
-   test $? -eq 1
-   test -n "${result}"
-}
-
-test_test_files() {
-   result=$(ut__test_files 'test_*.sh' 2>&1)
-
-   test $? -eq 0
-   test "${result}" = 'test_*.sh'
-}
-
-test_invalid_test_files() {
    result=$(ut__test_files 'error' 2>&1)
 
    test $? -eq 1
    test -n "${result}"
 }
+

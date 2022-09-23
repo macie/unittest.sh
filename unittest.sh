@@ -18,9 +18,6 @@ _coverage=0  # no coverage
 _cover_dir=''
 _verbosity=1  # normal verbosity
 
-_test_dir=''
-_test_files=''
-
 
 #
 #   MESSAGES
@@ -426,69 +423,24 @@ ut__parse_args() {
 ut__test_files() {
     # TODO: It works for reasonable number of files with tests. For very large number of test files
     #       it should use temporary file to store them.
-    find "$1" -name 'test_*.sh' -print 2>/dev/null
+    find "${1:-./}" -path "*${1:-tests/}*" -name 'test_*.sh' -print 2>/dev/null
     if [ $? -gt 0 ]; then
         ut__test_debug_info 'TESTS NOT FOUND' \
-            "I was looking for 'test_*.sh' files inside '$1' directory using:" \
-            "    $ find \"$1\" -name 'test_*.sh' -print" \
-            'but I got error with message:' \
-            "    $(find \"$1\" -name 'test_*.sh' -print 2>&1)"
+            "I was looking for 'test_*.sh' files inside '${1:-tests/}' directory using:" \
+            "    $ find \"${1:-./}\" -path \"*${1:-tests/}*\" -name 'test_*.sh' -print" \
+            'but instead of files I got an error with message:' \
+            "    $(find \"${1:-./}\" -path \"*${1:-tests/}*\" -name 'test_*.sh' -print 2>&1)"
         return 1
     fi
 
     return 0
-}
-
-##
-# Find directory with tests inside given directory.
-# Arguments:
-#     1 (string) - Directory to search inside it.
-# Outputs:
-#     stdout - Directory with test files.
-#     stderr - (optional) Debug/error message.
-# Exit Statuses:
-#     0 - Successfully traversed all directories.
-#    >0 - An error occurred.
-##
-ut__test_directory() {
-    find "$1" -type d -name 'tests' -print 2>/dev/null
-    if [ $? -gt 0 ]; then
-        ut__test_debug_info 'TESTS NOT FOUND' \
-            "I was looking for 'tests' directory inside '$1' directory using:" \
-            "    $ find \"$1\" -type d -name 'tests' -print" \
-            'but I got error with message:' \
-            "    $(find \"$1\" -type d -name 'tests' -print 2>&1)"
-        return 1
-    fi
-
-    return 0
-}
-
-ut__autodiscovery() {
-  #
-  # Finds directories with tests.
-  #
-  # Globals:
-  #     _test_dir (str) - Directory with tests.
-  #
-  # Arguments:
-  #     None
-  #
-  # Returns:
-  #     testfiles (str) - Files with tests.
-  #
-  if [ "${_test_dir}" = '' ]; then
-    _test_dir=$(ut__test_directory './')
-  fi
-
-  _test_files=$(ut__test_files "${_test_dir}")
 }
 
 ut__testrunner() {
     # prefix: utt8r_
 
     UNITTEST_STATUS=0
-    for utt8r_testfile in ${_test_files}; do
+    for utt8r_testfile in $(ut__test_files ${_test_dir}); do
         (
             utt8r_beforeAll=$(grep -o "^[ \t]*beforeAll" ${utt8r_testfile})
             utt8r_afterAll=$(grep -o "^[ \t]*afterAll" ${utt8r_testfile})
@@ -533,7 +485,6 @@ ut__testrunner() {
         NO_COLOR='YES'
     fi
     ut__parse_args "$@"
-    ut__autodiscovery
     ut__testrunner
     exit $?
 }
