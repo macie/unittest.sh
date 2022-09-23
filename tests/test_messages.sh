@@ -19,13 +19,13 @@ tearDown() {
 
 
 #
-#  ut__error_message
+#  unittest__error_message
 #
 
 test_error_message() {
   error_msg='error message'
 
-  result=$( (ut__error_message msg="${error_msg}") 2>&1 )
+  result=$( (unittest__error_message msg="${error_msg}") 2>&1 )
 
   local expected="Error: ${error_msg}."
 
@@ -33,7 +33,7 @@ test_error_message() {
 }
 
 xtest_unknown_error_message() {
-  result=$( (ut__error_message) 2>&1 )
+  result=$( (unittest__error_message) 2>&1 )
 
   local expected="Error: unknown error."
 

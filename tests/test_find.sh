@@ -14,14 +14,14 @@ afterAll() {
 }
 
 test_tests_directory() {
-   result=$(ut__test_files 'some_dir/' 2>&1)
+   result=$(unittest__test_files 'some_dir/' 2>&1)
 
    test $? -eq 0
    test "${result}" = 'some_dir/'
 }
 
 test_invalid_tests_directory() {
-   result=$(ut__test_files 'error' 2>&1)
+   result=$(unittest__test_files 'error' 2>&1)
 
    test $? -eq 1
    test -n "${result}"

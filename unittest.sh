@@ -23,7 +23,7 @@ _verbosity=1  # normal verbosity
 #   MESSAGES
 #
 
-ut__help_message() {
+unittest__help_message() {
   #
   # Shows help message.
   #
@@ -51,7 +51,7 @@ ut__help_message() {
   echo '                                  selected directory.'
 }
 
-ut__version_message() {
+unittest__version_message() {
   #
   # Shows version message.
   #
@@ -70,7 +70,7 @@ ut__version_message() {
   echo 'MIT License (http://opensource.org/licenses/MIT)'
 }
 
-ut__error_message() {
+unittest__error_message() {
   #
   # Shows error message.
   #
@@ -93,7 +93,7 @@ ut__error_message() {
   echo "Error: ${msg}." 1>&2
 }
 
-ut__test_result() {
+unittest__print_result() {
     # Write test status message to stdout
     # $1 - test location
     # $2 - test status
@@ -126,7 +126,7 @@ ut__test_result() {
     return 0
 }
 
-ut__test_debug_info() {
+unittest__print_debug() {
     # $1 - category
     # $2-... - paragraphs
     # prefix: utt13o_
@@ -159,13 +159,13 @@ test() {
     case $? in
         0)  ;;
         1)
-            ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
+            unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
                 "I expected 'test $*' to be true, but the result was false."
             UNITTEST_CURRENT_STATUS=1
             return 1
             ;;
         *)
-            ut__test_debug_info "INVALID ASSERTION [${UNITTEST_CURRENT}]" \
+            unittest__print_debug "INVALID ASSERTION [${UNITTEST_CURRENT}]" \
                 "I tried to check 'test $*', but I got error with message: '${UT4e1_test_error_msg}'. Did you use proper operator?" \
                 "Hint: Some operators requires specific type of values. Read 'man test' to learn more."
             UNITTEST_CURRENT_STATUS=1
@@ -184,7 +184,7 @@ assertEqual() {
   if [ "${result}" = "${expected}" ]; then
     return 0
   else
-    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
+    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertEqual $*' to be true, but the result was false."
     UNITTEST_CURRENT_STATUS=1
     return 1
@@ -199,7 +199,7 @@ assertNotEqual() {
   if [ "${result}" != "${expected}" ]; then
     return 0
   else
-    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
+    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertNotEqual $*' to be true, but the result was false."
     UNITTEST_CURRENT_STATUS=1
     return 1
@@ -215,7 +215,7 @@ assertTrue() {
        && [ "${result}" ]; then
     return 0
   else
-    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
+    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertTrue $*' to be true, but the result was false."
     UNITTEST_CURRENT_STATUS=1
     return 1
@@ -231,7 +231,7 @@ assertFalse() {
       || [ ! "${result}" ]; then
     return 0
   else
-    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
+    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertFalse $*' to be true, but the result was false."
     UNITTEST_CURRENT_STATUS=1
     return 1
@@ -247,7 +247,7 @@ assertRaises() {
       && [ "${result}" = "${expected}" ]; then
     return 0
   else
-    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
+    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertRaises $*' to be true, but the result was false."
     UNITTEST_CURRENT_STATUS=1
     return 1
@@ -265,7 +265,7 @@ assertGreater() {
       && [ ${result} -gt ${expected} ]; then
     return 0
   else
-    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
+    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertGreater $*' to be true, but the result was false."
     UNITTEST_CURRENT_STATUS=1
     return 1
@@ -283,7 +283,7 @@ assertGreaterEqual() {
       && [ ${result} -ge ${expected} ]; then
     return 0
   else
-    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
+    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertGreaterEqual $*' to be true, but the result was false."
     UNITTEST_CURRENT_STATUS=1
     return 1
@@ -301,7 +301,7 @@ assertLess() {
       && [ ${result} -lt ${expected} ]; then
     return 0
   else
-    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
+    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertLess $*' to be true, but the result was false."
     UNITTEST_CURRENT_STATUS=1
     return 1
@@ -319,7 +319,7 @@ assertLessEqual() {
       && [ ${result} -le ${expected} ]; then
     return 0
   else
-    ut__test_debug_info "FAILED TEST [${UNITTEST_CURRENT}]" \
+    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
         "I expected 'assertLessEqual $*' to be true, but the result was false."
     UNITTEST_CURRENT_STATUS=1
     return 1
@@ -331,7 +331,7 @@ assertLessEqual() {
 #   FUNCTIONS
 #
 
-ut__parse_args() {
+unittest__parse_args() {
   #
   # Parses script parameters.
   #
@@ -351,7 +351,7 @@ ut__parse_args() {
   for arg in "$@"; do
     case "${arg}" in
       -h|--help|-\?)
-        ut__help_message
+        unittest__help_message
         exit 0
       ;;
 
@@ -360,13 +360,13 @@ ut__parse_args() {
           _test_dir="$2"
           shift 2
         else
-          ut__error_message msg='no directory specified'
+          unittest__error_message msg='no directory specified'
           exit 64  # command line usage error (via /usr/include/sysexits.h)
         fi
       ;;
 
       -V|--version|-\?)
-        ut__version_message
+        unittest__version_message
         exit 0
       ;;
 
@@ -391,16 +391,16 @@ ut__parse_args() {
           _cover_dir="$2"
           shift 2
         elif [ ${_coverage} -eq 0 ]; then
-          ut__error_message msg='no coverage support enabled'
+          unittest__error_message msg='no coverage support enabled'
           exit 78  # configuration error (via /usr/include/sysexits.h)
         else
-          ut__error_message msg='no directory specified'
+          unittest__error_message msg='no directory specified'
           exit 64  # command line usage error (via /usr/include/sysexits.h)
         fi
       ;;
 
       -*)
-        ut__error_message msg="invalid option: $1"
+        unittest__error_message msg="invalid option: $1"
         exit 64  # command line usage error (via /usr/include/sysexits.h)
       ;;
     esac
@@ -420,12 +420,12 @@ ut__parse_args() {
 #     0 - Successfully traversed all directories.
 #    >0 - An error occurred.
 ##
-ut__test_files() {
+unittest__test_files() {
     # TODO: It works for reasonable number of files with tests. For very large number of test files
     #       it should use temporary file to store them.
     find "${1:-./}" -path "*${1:-tests/}*" -name 'test_*.sh' -print 2>/dev/null
     if [ $? -gt 0 ]; then
-        ut__test_debug_info 'TESTS NOT FOUND' \
+        unittest__print_debug 'TESTS NOT FOUND' \
             "I was looking for 'test_*.sh' files inside '${1:-tests/}' directory using:" \
             "    $ find \"${1:-./}\" -path \"*${1:-tests/}*\" -name 'test_*.sh' -print" \
             'but instead of files I got an error with message:' \
@@ -436,11 +436,11 @@ ut__test_files() {
     return 0
 }
 
-ut__testrunner() {
+unittest__run() {
     # prefix: utt8r_
 
     UNITTEST_STATUS=0
-    for utt8r_testfile in $(ut__test_files ${_test_dir}); do
+    for utt8r_testfile in $(unittest__test_files ${_test_dir}); do
         (
             utt8r_beforeAll=$(grep -o "^[ \t]*beforeAll" ${utt8r_testfile})
             utt8r_afterAll=$(grep -o "^[ \t]*afterAll" ${utt8r_testfile})
@@ -459,10 +459,10 @@ ut__testrunner() {
                 ${utt8r_afterEach}
 
                 if [ ${UNITTEST_CURRENT_STATUS} -eq 0 ]; then
-                    ut__test_result "${UNITTEST_CURRENT}" 'PASS'
+                    unittest__print_result "${UNITTEST_CURRENT}" 'PASS'
                 else
                     UNITTEST_STATUS=1
-                    ut__test_result "${UNITTEST_CURRENT}" 'FAIL'
+                    unittest__print_result "${UNITTEST_CURRENT}" 'FAIL'
                 fi
             done
             ${utt8r_afterAll}
@@ -484,7 +484,7 @@ ut__testrunner() {
     if [ -z "${NO_COLOR}" ] && [ $(tput colors) -lt 8 ]; then
         NO_COLOR='YES'
     fi
-    ut__parse_args "$@"
-    ut__testrunner
+    unittest__parse_args "$@"
+    unittest__run
     exit $?
 }
