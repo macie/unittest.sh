@@ -23,53 +23,6 @@ _verbosity=1  # normal verbosity
 #   MESSAGES
 #
 
-unittest__help_message() {
-  #
-  # Shows help message.
-  #
-  # Globals:
-  #     None
-  #
-  # Arguments:
-  #     None
-  #
-  # Returns:
-  #     String message to standard output.
-  #
-  echo 'unittest.sh - unit tests framework for shell scripts.'
-  echo 'Usage:'
-  echo '  unittest.sh [options] [filename]'
-  echo 
-  echo 'Options:'
-  echo '  -h, --help                      Show this help and exit.'
-  echo '  -V, --version                   Show version number and exit.'
-  echo '  -w, --where <directory>         Look for tests in this directory.'
-  echo '  -v, --verbose                   Be more verbose.'
-  echo '  -q, --quiet                     Be less verbose.'
-  echo '      --with-coverage             Enable plugin coverage.sh.'
-  echo '      --cover-dir <directory>     Restrict coverage output to'
-  echo '                                  selected directory.'
-}
-
-unittest__version_message() {
-  #
-  # Shows version message.
-  #
-  # Globals:
-  #     _version_ - Version number.
-  #
-  # Arguments:
-  #     None
-  #
-  # Returns:
-  #     String message to standard output.
-  #
-  echo "unittest.sh ${_version_}"
-  echo
-  echo 'Copyright (c) 2014 Maciej Żok'
-  echo 'MIT License (http://opensource.org/licenses/MIT)'
-}
-
 unittest__error_message() {
   #
   # Shows error message.
@@ -351,7 +304,21 @@ unittest__parse_args() {
   for arg in "$@"; do
     case "${arg}" in
       -h|--help|-\?)
-        unittest__help_message
+        cat >&2 <<-'EOF'
+		unittest.sh - unit tests framework for shell scripts.
+		Usage:
+		  unittest.sh [options] [filename]
+		
+		Options:
+		  -h, --help                      Show this help and exit.
+		  -V, --version                   Show version number and exit.
+		  -w, --where <directory>         Look for tests in this directory.
+		  -v, --verbose                   Be more verbose.
+		  -q, --quiet                     Be less verbose.
+		      --with-coverage             Enable plugin coverage.sh.
+		      --cover-dir <directory>     Restrict coverage output to
+		                                  selected directory.
+	EOF
         exit 0
       ;;
 
@@ -366,7 +333,12 @@ unittest__parse_args() {
       ;;
 
       -V|--version|-\?)
-        unittest__version_message
+        cat >&2 <<-EOF
+		unittest.sh ${_version_}
+		
+		Copyright (c) 2014 Maciej Żok
+		MIT License (http://opensource.org/licenses/MIT)
+	EOF
         exit 0
       ;;
 
