@@ -23,29 +23,6 @@ _verbosity=1  # normal verbosity
 #   MESSAGES
 #
 
-unittest__error_message() {
-  #
-  # Shows error message.
-  #
-  # Globals:
-  #     None
-  #
-  # Arguments:
-  #     msg (str) - Error message.
-  #
-  # Returns:
-  #     String message to err output.
-  #
-  local msg
-  local "$@"
-
-  if [ -z "${msg}" ]; then  # no specified message
-    msg="unknown error"
-  fi
-
-  echo "Error: ${msg}." 1>&2
-}
-
 unittest__print_result() {
     # Write test status message to stdout
     # $1 - test location
@@ -327,7 +304,8 @@ unittest__parse_args() {
           _test_dir="$2"
           shift 2
         else
-          unittest__error_message msg='no directory specified'
+          unittest__print_debug 'INVALID USAGE' \
+            "When using flag '${arg}' you need to specify directory."
           exit 64  # command line usage error (via /usr/include/sysexits.h)
         fi
       ;;
@@ -363,16 +341,23 @@ unittest__parse_args() {
           _cover_dir="$2"
           shift 2
         elif [ ${_coverage} -eq 0 ]; then
-          unittest__error_message msg='no coverage support enabled'
+          unittest__print_debug 'INVALID USAGE' \
+            "Flag '${arg}' need to be used after flag '--with-coverage'." \
+            'Hint: Find valid usage with:' \
+            '    $ unittest.sh -h'
           exit 78  # configuration error (via /usr/include/sysexits.h)
         else
-          unittest__error_message msg='no directory specified'
+          unittest__print_debug 'INVALID USAGE' \
+            "When using flag '${arg}' you need to specify directory."
           exit 64  # command line usage error (via /usr/include/sysexits.h)
         fi
       ;;
 
       -*)
-        unittest__error_message msg="invalid option: $1"
+        unittest__print_debug 'INVALID USAGE' \
+          "I don't recognize '$1' option. Did you wanted to use option or misspelled file/directory?" \
+          'Hint: Find valid usage with:' \
+          '    $ unittest.sh -h'
         exit 64  # command line usage error (via /usr/include/sysexits.h)
       ;;
     esac
