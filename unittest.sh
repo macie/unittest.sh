@@ -332,7 +332,7 @@ unittest__parse_args() {
         fi
       ;;
 
-      -V|--version|-\?)
+      -V|--version)
         cat >&2 <<-EOF
 		unittest.sh ${_version_}
 		
