@@ -393,11 +393,20 @@ unittest__test_files() {
     return 0
 }
 
+##
+# Run tests from given files.
+# STDIN: List of files.
+# STDOUT: Test name with status.
+# STDERR: (optional) Debug/error message.
+# EXIT STATUS:
+#     0 - All tests passed.
+#    >0 - Some tests failed.
+##
 unittest__run() {
     # prefix: utt8r_
 
     UNITTEST_STATUS=0
-    for utt8r_testfile in $(unittest__test_files ${_test_dir}); do
+    for utt8r_testfile in $(cat -); do
         (
             utt8r_beforeAll=$(grep -o "^[ \t]*beforeAll" ${utt8r_testfile})
             utt8r_afterAll=$(grep -o "^[ \t]*afterAll" ${utt8r_testfile})
@@ -442,6 +451,6 @@ unittest__run() {
         NO_COLOR='YES'
     fi
     unittest__parse_args "$@"
-    unittest__run
+    unittest__test_files "${_test_dir}" | unittest__run
     exit $?
 }
