@@ -367,30 +367,51 @@ unittest__parse_args() {
 }
 
 ##
-# Find test files inside given directory.
-# Arguments:
-#     1 (string) - Directory to search inside it.
-# Outputs:
-#     stdout - List of files.
-#     stderr - (optional) Debug/error message.
-# Exit Statuses:
+# Find files with tests (test_*.sh).
+# SYNOPSIS:
+#     unittest__test_files [directory...]
+# OPERANDS:
+#     directory - A pathname of directory to search in. If no directory is
+#         given, it will look for 'tests' directory inside current one. If
+#         a directory is '-', it will use stdin.
+# STDIN:
+#     (optional) List of directories to search in. Used when call with '-' argument.
+# STDOUT:
+#     List of 'test_*.sh' file paths.
+# STDERR:
+#     (optional) Debug/error message.
+# EXIT STATUS:
 #     0 - Successfully traversed all directories.
 #    >0 - An error occurred.
-##
+# EXAMPLES:
+#     unittest__test_files ./unit_tests ./integration_tests
+#     ls ../ | unittest__test_files -
+# CAVEATS:
+#     Calling it inside pipeline without '-' will disregards standard input and
+#     use defaults instead.
 unittest__test_files() {
-    # TODO: It works for reasonable number of files with tests. For very large number of test files
-    #       it should use temporary file to store them.
-    find "${1:-./}" -path "*${1:-tests/}*" -name 'test_*.sh' -print 2>/dev/null
-    if [ $? -gt 0 ]; then
-        unittest__print_debug 'TESTS NOT FOUND' \
-            "I was looking for 'test_*.sh' files inside '${1:-tests/}' directory using:" \
-            "    $ find \"${1:-./}\" -path \"*${1:-tests/}*\" -name 'test_*.sh' -print" \
-            'but instead of files I got an error with message:' \
-            "    $(find \"${1:-./}\" -path \"*${1:-tests/}*\" -name 'test_*.sh' -print 2>&1)"
-        return 1
-    fi
+    {
+        if [ "$1" = '-' ]; then
+            cat -
+        else
+            printf '%s\n' "$@"
+        fi
+     } |
+     while read -r unittest_dir; do
+         find "${unittest_dir:-./}" -path "*${unittest_dir:-tests/}*" -name 'test_*.sh' 2>/dev/null
+         if [ $? -gt 0 ]; then
+             unittest__print_debug 'TESTS NOT FOUND' \
+                 "I was looking for 'test_*.sh' files inside '${unittest_dir:-tests/}' directory using:" \
+                 "    $ find \"${unittest_dir:-./}\" -path \"*${unittest_dir:-tests/}*\" -name 'test_*.sh' -print" \
+                 'but instead of files I got an error with message:' \
+                 "    $(find "${unittest_dir:-./}" -path "*${unittest_dir:-tests/}*" -name 'test_*.sh' -print 2>&1)"
+             unset -v unittest_dir
+             return 1
+         fi
+         unset -v unittest_dir
+     done
 
-    return 0
+     return $?
 }
 
 ##
@@ -451,6 +472,6 @@ unittest__run() {
         NO_COLOR='YES'
     fi
     unittest__parse_args "$@"
-    unittest__test_files "${_test_dir}" | unittest__run
+    echo "${_test_dir}" | unittest__test_files - | unittest__run
     exit $?
 }
