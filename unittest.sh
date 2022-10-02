@@ -442,15 +442,21 @@ unittest__run() {
                 UNITTEST_CURRENT_STATUS=0
 
                 ${utt8r_beforeEach}
-                ${_current_testcase}
-                ${utt8r_afterEach}
-
-                if [ ${UNITTEST_CURRENT_STATUS} -eq 0 ]; then
-                    unittest__print_result "${UNITTEST_CURRENT}" 'PASS'
+                # test result is status of last command in test
+                if ${_current_testcase}; then
+                    if [ ${UNITTEST_CURRENT_STATUS} -ne 0 ]; then
+                        # legacy undocumented behavior: assertions could exist
+                        # in the middle of test
+                        unittest__print_result "${UNITTEST_CURRENT}" 'FAIL'
+                    else
+                        unittest__print_result "${UNITTEST_CURRENT}" 'PASS'
+                    fi
                 else
+                    # last command in test failed
                     UNITTEST_STATUS=1
                     unittest__print_result "${UNITTEST_CURRENT}" 'FAIL'
                 fi
+                ${utt8r_afterEach}
             done
             ${utt8r_afterAll}
             unset -v UNITTEST_CURRENT UNITTEST_CURRENT_STATUS
