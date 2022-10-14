@@ -66,13 +66,18 @@ unittest__print_debug() {
     if [ -t 2 ] && [ -z "${NO_COLOR}" ]; then  # stderr is interactive terminal
         utt13o_color='\033[34m'  # blue
         utt13o_color_default='\033[0m'
+        utt13o_color_quote='\033[37m'  # gray
     fi
 
     printf "\n${utt13o_color}-- %s${utt13o_color_default}\n\n" "$1" >&2
 
     shift 1
     for utt13o_paragraph in "$@"; do
-        printf '%s\n\n' "${utt13o_paragraph}" >&2
+        case ${utt13o_paragraph} in
+            ' '*) printf "${utt13o_color_quote}" >&2 ;;
+            *)  ;;
+        esac
+        printf "%s${utt13o_color_default}\n\n" "${utt13o_paragraph}" >&2
     done
 
     unset -v utt13o_paragraph utt13o_color utt13o_color_default
@@ -85,18 +90,24 @@ unittest__print_debug() {
 
 test() {
     # same arguments as command test(1)
-    UT4e1_test_error_msg=`/bin/test "$@" 2>&1`
+    UT4e1_test_error_msg=$(/bin/test "$@" 2>&1)
     case $? in
         0)  ;;
         1)
             unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-                "I expected 'test $*' to be true, but the result was false."
+                'I expected:' \
+                "    test$(printf " '%s'" "$@")" \
+                'to be true, but the result was false.'
             UNITTEST_CURRENT_STATUS=1
             return 1
             ;;
         *)
             unittest__print_debug "INVALID ASSERTION [${UNITTEST_CURRENT}]" \
-                "I tried to check 'test $*', but I got error with message: '${UT4e1_test_error_msg}'. Did you use proper operator?" \
+                'I tried to check' \
+                "    test$(printf " '%s'" "$@")" \
+                'but I got error with message:' \
+                "    ${UT4e1_test_error_msg}" \
+                'Did you use proper operator?' \
                 "Hint: Some operators requires specific type of values. Read 'man test' to learn more."
             UNITTEST_CURRENT_STATUS=1
             return 1
