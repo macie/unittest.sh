@@ -26,10 +26,17 @@ tests/test_asserts.sh:test_assertEqual_unequal_ints	PASS
 ...
 ```
 
-Result is reported to stdout. Non-zero exit code indicates, that some tests has failed.
+Result is reported to stdout. Non-zero exit code indicates, that some tests has failed. To be passed,
+each test should exit with 0 code.
 
-To be passed, each test should exit with 0 code. Tests can call `test` function, which extends [test](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/test.html) command with
-readable error report (to stderr):
+In addition to `test_*` functions, you can also define functions named:
+
+- `xtest_*` - will be reported as SKIP (without error)
+- `beforeEach` and `afterEach` - test preparation/cleanup code executed before/after each test function
+- `beforeAll` and `afterAll` - test preparation/cleanup code executed once per file, before/after all test functions.
+
+Tests can call `test` function, which extends [test](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/test.html)
+command with readable error report (to stderr):
 
 ```bash
 $ unittest.sh

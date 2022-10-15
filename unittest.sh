@@ -44,8 +44,8 @@ unittest__print_result() {
                 utt9t_color_status='\033[97;41m'
                 ;;
             SKIP)  # location: gray; status: gray
-                utt9t_color_location='\033[90m'
-                utt9t_color_status='\033[90m'
+                utt9t_color_location='\033[37m'
+                utt9t_color_status='\033[37m'
                 ;;
         esac
     fi
@@ -444,7 +444,7 @@ unittest__run() {
             utt8r_afterAll=$(sed -n 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' ${utt8r_testfile})
             utt8r_beforeEach=$(sed -n -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' ${utt8r_testfile})
             utt8r_afterEach=$(sed -n -e 's/^[ \t]*\(afterEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(tearDown\)[ \t]*(.*/\1/p' ${utt8r_testfile})
-            utt8r_tests=$(sed -n 's/^[ \t]*\(test_[^(]*\)(.*/\1/p' ${utt8r_testfile})
+            utt8r_tests=$(sed -n 's/^[ \t]*\(x\{0,1\}test_[^(]*\)(.*/\1/p' ${utt8r_testfile})
 
             . ${utt8r_testfile}
             ${utt8r_beforeAll}
@@ -452,22 +452,29 @@ unittest__run() {
                 UNITTEST_CURRENT="${utt8r_testfile#./}:${_current_testcase}"
                 UNITTEST_CURRENT_STATUS=0
 
-                ${utt8r_beforeEach}
-                # test result is status of last command in test
-                if ${_current_testcase}; then
-                    if [ ${UNITTEST_CURRENT_STATUS} -ne 0 ]; then
-                        # legacy undocumented behavior: assertions could exist
-                        # in the middle of test
-                        unittest__print_result "${UNITTEST_CURRENT}" 'FAIL'
-                    else
-                        unittest__print_result "${UNITTEST_CURRENT}" 'PASS'
-                    fi
-                else
-                    # last command in test failed
-                    UNITTEST_STATUS=1
-                    unittest__print_result "${UNITTEST_CURRENT}" 'FAIL'
-                fi
-                ${utt8r_afterEach}
+                case ${_current_testcase} in
+                    x*)
+                        unittest__print_result "${UNITTEST_CURRENT}" 'SKIP'
+                        ;;
+                    *)
+                        ${utt8r_beforeEach}
+                        # test result is status of last command in test
+                        if ${_current_testcase}; then
+                            if [ ${UNITTEST_CURRENT_STATUS} -ne 0 ]; then
+                                # legacy undocumented behavior: assertions could exist
+                                # in the middle of test
+                                unittest__print_result "${UNITTEST_CURRENT}" 'FAIL'
+                            else
+                                unittest__print_result "${UNITTEST_CURRENT}" 'PASS'
+                            fi
+                        else
+                            # last command in test failed
+                            UNITTEST_STATUS=1
+                            unittest__print_result "${UNITTEST_CURRENT}" 'FAIL'
+                        fi
+                        ${utt8r_afterEach}
+                        ;;
+                esac
             done
             ${utt8r_afterAll}
             unset -v UNITTEST_CURRENT UNITTEST_CURRENT_STATUS
