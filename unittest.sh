@@ -440,11 +440,11 @@ unittest__run() {
     UNITTEST_STATUS=0
     for utt8r_testfile in $(cat -); do
         (
-            utt8r_beforeAll=$(grep -o "^[ \t]*beforeAll" ${utt8r_testfile})
-            utt8r_afterAll=$(grep -o "^[ \t]*afterAll" ${utt8r_testfile})
-            utt8r_beforeEach=$(grep -Eo "^[ \t]*(setUp|beforeEach)" ${utt8r_testfile})
-            utt8r_afterEach=$(grep -Eo "^[ \t]*(tearDown|afterEach)" ${utt8r_testfile})
-            utt8r_tests=$(grep -o "^[ \t]*test_[^\(]*" ${utt8r_testfile})
+            utt8r_beforeAll=$(sed -n 's/^[ \t]*\(beforeAll\)[ \t]*(.*/\1/p' ${utt8r_testfile})
+            utt8r_afterAll=$(sed -n 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' ${utt8r_testfile})
+            utt8r_beforeEach=$(sed -n -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' ${utt8r_testfile})
+            utt8r_afterEach=$(sed -n -e 's/^[ \t]*\(afterEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(tearDown\)[ \t]*(.*/\1/p' ${utt8r_testfile})
+            utt8r_tests=$(sed -n 's/^[ \t]*\(test_[^(]*\)(.*/\1/p' ${utt8r_testfile})
 
             . ${utt8r_testfile}
             ${utt8r_beforeAll}
