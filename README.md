@@ -1,4 +1,4 @@
-# unittest.sh
+# unittest
 
 [![Build Status](https://dl.circleci.com/status-badge/img/gh/macie/unittest.sh/tree/master.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/macie/unittest.sh/tree/master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/8af95532e36373322d1c/maintainability)](https://codeclimate.com/github/macie/unittest.sh/maintainability)
@@ -20,7 +20,7 @@ in any language.
 With basic call, it searches inside `tests\` directory for `test_*.sh` files with `test_*` functions:
 
 ```bash
-$ unittest.sh
+$ unittest
 tests/test_asserts.sh:test_assertEqual_equal_ints	PASS
 tests/test_asserts.sh:test_assertEqual_unequal_ints	PASS
 ...
@@ -39,7 +39,7 @@ Tests can call `test` function, which extends [test](https://pubs.opengroup.org/
 command with readable error report (to stderr):
 
 ```bash
-$ unittest.sh
+$ unittest
 ...
 tests/test_number_assertions.sh:test_lessequal_mixed2	PASS
 
@@ -62,15 +62,15 @@ For example tests see files inside [tests directory](./tests).
 
 Using `curl`:
 ```bash
-curl -fLO https://raw.githubusercontent.com/macie/unittest.sh/master/unittest.sh
-chmod +x unittest.sh
+curl -fLO https://raw.githubusercontent.com/macie/unittest.sh/master/unittest
+chmod +x unittest
 ```
 
 or with `wget`:
 
 ```bash
-wget https://raw.githubusercontent.com/macie/unittest.sh/master/unittest.sh
-chmod +x unittest.sh
+wget https://raw.githubusercontent.com/macie/unittest.sh/master/unittest
+chmod +x unittest
 ```
 
 ## Alternatives

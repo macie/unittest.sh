@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: "run tests"
-          command: ./unittest.sh tests/
+          command: ./unittest
 
 workflows:
   version: 2
