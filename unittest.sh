@@ -1,22 +1,11 @@
 #!/bin/sh
 #
-# unittest.sh - unit tests framework for shell scripts.
+# unittest - unit tests framework for shell scripts.
 #
 # https://github.com/macie/unittest.sh
 #
 # Copyright (c) 2014 Maciej Żok <maciek.zok@gmail.com>
 # MIT License (http://opensource.org/licenses/MIT)
-
-
-#
-#   DEFAULTS
-#
-
-readonly _version_='0.1-dev'
-
-_coverage=0  # no coverage
-_cover_dir=''
-_verbosity=1  # normal verbosity
 
 
 #
@@ -98,7 +87,6 @@ test() {
                 'I expected:' \
                 "    test$(printf " '%s'" "$@")" \
                 'to be true, but the result was false.'
-            UNITTEST_CURRENT_STATUS=1
             return 1
             ;;
         *)
@@ -109,7 +97,6 @@ test() {
                 "    ${UT4e1_test_error_msg}" \
                 'Did you use proper operator?' \
                 "Hint: Some operators requires specific type of values. Read 'man test' to learn more."
-            UNITTEST_CURRENT_STATUS=1
             return 1
             ;;
     esac
@@ -117,265 +104,10 @@ test() {
     return 0
 }
 
-assertEqual() {
-  # assertEqual 0 0  => pass
-  local result="$1"
-  local expected="$2"
-
-  if [ "${result}" = "${expected}" ]; then
-    return 0
-  else
-    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-        "I expected 'assertEqual $*' to be true, but the result was false."
-    UNITTEST_CURRENT_STATUS=1
-    return 1
-  fi
-}
-
-assertNotEqual() {
-  # assertNotEqual 0 1  => pass
-  local result="$1"
-  local expected="$2"
-
-  if [ "${result}" != "${expected}" ]; then
-    return 0
-  else
-    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-        "I expected 'assertNotEqual $*' to be true, but the result was false."
-    UNITTEST_CURRENT_STATUS=1
-    return 1
-  fi
-}
-
-assertTrue() {
-  # assertTrue 1  => pass
-  # assertTrue ""  => fail
-  local result="$1"
-
-  if [ "${result}" != "0" ] \
-       && [ "${result}" ]; then
-    return 0
-  else
-    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-        "I expected 'assertTrue $*' to be true, but the result was false."
-    UNITTEST_CURRENT_STATUS=1
-    return 1
-  fi
-}
-
-assertFalse() {
-  # assertFalse 0  => pass
-  # assertFalse ""  => pass
-  local result="$1"
-
-  if [ "${result}" = "0" ] \
-      || [ ! "${result}" ]; then
-    return 0
-  else
-    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-        "I expected 'assertFalse $*' to be true, but the result was false."
-    UNITTEST_CURRENT_STATUS=1
-    return 1
-  fi
-}
-
-assertRaises() {
-  # assertRaises function 1
-  local result="$1"
-  local expected="$2"
-
-  if [ -n "${expected}" ] \
-      && [ "${result}" = "${expected}" ]; then
-    return 0
-  else
-    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-        "I expected 'assertRaises $*' to be true, but the result was false."
-    UNITTEST_CURRENT_STATUS=1
-    return 1
-  fi
-}
-
-assertGreater() {
-  local result=$1
-  local expected=$2
-
-  if [ -n "${result}" ] \
-      && [ -n "${expected}" ] \
-      && [ ${result} -eq ${result} 2> /dev/null ] \
-      && [ ${expected} -eq ${expected} 2> /dev/null ] \
-      && [ ${result} -gt ${expected} ]; then
-    return 0
-  else
-    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-        "I expected 'assertGreater $*' to be true, but the result was false."
-    UNITTEST_CURRENT_STATUS=1
-    return 1
-  fi
-}
-
-assertGreaterEqual() {
-  local result=$1
-  local expected=$2
-
-  if [ -n "${result}" ] \
-      && [ -n "${expected}" ] \
-      && [ ${result} -eq ${result} 2> /dev/null ] \
-      && [ ${expected} -eq ${expected} 2> /dev/null ] \
-      && [ ${result} -ge ${expected} ]; then
-    return 0
-  else
-    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-        "I expected 'assertGreaterEqual $*' to be true, but the result was false."
-    UNITTEST_CURRENT_STATUS=1
-    return 1
-  fi
-}
-
-assertLess() {
-  local result=$1
-  local expected=$2
-
-  if [ -n "${result}" ] \
-      && [ -n "${expected}" ] \
-      && [ ${result} -eq ${result} 2> /dev/null ] \
-      && [ ${expected} -eq ${expected} 2> /dev/null ] \
-      && [ ${result} -lt ${expected} ]; then
-    return 0
-  else
-    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-        "I expected 'assertLess $*' to be true, but the result was false."
-    UNITTEST_CURRENT_STATUS=1
-    return 1
-  fi
-}
-
-assertLessEqual() {
-  local result=$1
-  local expected=$2
-
-  if [ -n "${result}" ] \
-      && [ -n "${expected}" ] \
-      && [ ${result} -eq ${result} 2> /dev/null ] \
-      && [ ${expected} -eq ${expected} 2> /dev/null ] \
-      && [ ${result} -le ${expected} ]; then
-    return 0
-  else
-    unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-        "I expected 'assertLessEqual $*' to be true, but the result was false."
-    UNITTEST_CURRENT_STATUS=1
-    return 1
-  fi
-}
-
 
 #
 #   FUNCTIONS
 #
-
-unittest__parse_args() {
-  #
-  # Parses script parameters.
-  #
-  # Globals:
-  #     _coverage (int) - Is coverage plugin enabled?
-  #     _cover_dir (str) - Directory for coverage.
-  #     _test_dir (str) - Directory with tests.
-  #     _verbosity (int) - Verbosity level.
-  #
-  # Arguments:
-  #     params (str) - Script params.
-  #
-  # Returns:
-  #     String message or nothing.
-  #
-  arg_num=$#
-  for arg in "$@"; do
-    case "${arg}" in
-      -h|--help|-\?)
-        cat >&2 <<-'EOF'
-		unittest.sh - unit tests framework for shell scripts.
-		Usage:
-		  unittest.sh [options] [filename]
-		
-		Options:
-		  -h, --help                      Show this help and exit.
-		  -V, --version                   Show version number and exit.
-		  -w, --where <directory>         Look for tests in this directory.
-		  -v, --verbose                   Be more verbose.
-		  -q, --quiet                     Be less verbose.
-		      --with-coverage             Enable plugin coverage.sh.
-		      --cover-dir <directory>     Restrict coverage output to
-		                                  selected directory.
-	EOF
-        exit 0
-      ;;
-
-      -w|--where)
-        if [ ${arg_num} -gt 1 ]; then
-          _test_dir="$2"
-          shift 2
-        else
-          unittest__print_debug 'INVALID USAGE' \
-            "When using flag '${arg}' you need to specify directory."
-          exit 64  # command line usage error (via /usr/include/sysexits.h)
-        fi
-      ;;
-
-      -V|--version)
-        cat >&2 <<-EOF
-		unittest.sh ${_version_}
-		
-		Copyright (c) 2014 Maciej Żok
-		MIT License (http://opensource.org/licenses/MIT)
-	EOF
-        exit 0
-      ;;
-
-      -v|--verbose)
-        _verbosity=2
-        shift 1
-      ;;
-
-      -q|--quiet)
-        _verbosity=0
-        shift 1
-      ;;
-
-      --with-coverage)
-        _coverage=1
-        shift 1
-      ;;
-
-      --cover-dir)
-        if [ ${arg_num} -gt 1 ] \
-            && [ ${_coverage} -eq 1 ]; then
-          _cover_dir="$2"
-          shift 2
-        elif [ ${_coverage} -eq 0 ]; then
-          unittest__print_debug 'INVALID USAGE' \
-            "Flag '${arg}' need to be used after flag '--with-coverage'." \
-            'Hint: Find valid usage with:' \
-            '    $ unittest.sh -h'
-          exit 78  # configuration error (via /usr/include/sysexits.h)
-        else
-          unittest__print_debug 'INVALID USAGE' \
-            "When using flag '${arg}' you need to specify directory."
-          exit 64  # command line usage error (via /usr/include/sysexits.h)
-        fi
-      ;;
-
-      -*)
-        unittest__print_debug 'INVALID USAGE' \
-          "I don't recognize '$1' option. Did you wanted to use option or misspelled file/directory?" \
-          'Hint: Find valid usage with:' \
-          '    $ unittest.sh -h'
-        exit 64  # command line usage error (via /usr/include/sysexits.h)
-      ;;
-    esac
-
-    arg_num=$(( ${arg_num} - 1 ))
-  done
-}
 
 ##
 # Find files with tests (test_*.sh).
@@ -450,7 +182,6 @@ unittest__run() {
             ${utt8r_beforeAll}
             for _current_testcase in ${utt8r_tests}; do
                 UNITTEST_CURRENT="${utt8r_testfile#./}:${_current_testcase}"
-                UNITTEST_CURRENT_STATUS=0
 
                 case ${_current_testcase} in
                     x*)
@@ -460,13 +191,7 @@ unittest__run() {
                         ${utt8r_beforeEach}
                         # test result is status of last command in test
                         if ${_current_testcase}; then
-                            if [ ${UNITTEST_CURRENT_STATUS} -ne 0 ]; then
-                                # legacy undocumented behavior: assertions could exist
-                                # in the middle of test
-                                unittest__print_result "${UNITTEST_CURRENT}" 'FAIL'
-                            else
-                                unittest__print_result "${UNITTEST_CURRENT}" 'PASS'
-                            fi
+                            unittest__print_result "${UNITTEST_CURRENT}" 'PASS'
                         else
                             # last command in test failed
                             UNITTEST_STATUS=1
@@ -477,7 +202,7 @@ unittest__run() {
                 esac
             done
             ${utt8r_afterAll}
-            unset -v UNITTEST_CURRENT UNITTEST_CURRENT_STATUS
+            unset -v UNITTEST_CURRENT
             exit ${UNITTEST_STATUS}
         )
         UNITTEST_STATUS=$?
@@ -495,7 +220,46 @@ unittest__run() {
     if [ -z "${NO_COLOR}" ] && [ $(tput colors) -lt 8 ]; then
         NO_COLOR='YES'
     fi
-    unittest__parse_args "$@"
-    echo "${_test_dir}" | unittest__test_files - | unittest__run
-    exit $?
+
+    case $# in
+        0)  # discovery mode
+            unittest__test_files | unittest__run
+            exit $?
+            ;;
+        1)
+            case $1 in
+                -h|--help)
+                    cat >&2 <<-'EOF'
+			unittest - unit tests framework for shell scripts.
+			Usage:
+			  unittest [options] [test_directory|test_file]
+
+			Options:
+			  -h, --help                      Show this help and exit.
+			  -v, --version                   Show version number and exit.
+			EOF
+                    exit 0
+                    ;;
+
+                -v|--version)
+                    printf 'unittest 22.0\n' >&2
+                    exit 0
+                    ;;
+                *)  # specified directory/file
+                    if [ -d "$1" ]; then
+                        unittest__test_files "$1" | unittest__run
+                        exit $?
+                    elif [ -f "$1" ]; then
+                        printf '%s\n' "$1" | unittest__run
+                        exit $?
+                    fi
+                    ;;
+            esac
+    esac
+
+    unittest__print_debug 'INVALID USAGE' \
+        "I cannot understand '$@' option. Did you wanted to use option or misspelled file/directory?" \
+        'Hint: Find valid usage with:' \
+        '    $ unittest -h'
+    exit 64  # EX_USAGE
 }
