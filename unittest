@@ -63,7 +63,7 @@ unittest__print_debug() {
     shift 1
     for utt13o_paragraph in "$@"; do
         case ${utt13o_paragraph} in
-            ' '*) printf "${utt13o_color_quote}" >&2 ;;
+            ' '*) printf '%s' "${utt13o_color_quote}" >&2 ;;
             *)  ;;
         esac
         printf "%s${utt13o_color_default}\n\n" "${utt13o_paragraph}" >&2
@@ -141,8 +141,7 @@ unittest__test_files() {
         fi
      } |
      while read -r unittest_dir; do
-         find "${unittest_dir:-./}" -path "*${unittest_dir:-tests/}*" -name 'test_*.sh' 2>/dev/null
-         if [ $? -gt 0 ]; then
+         if ! find "${unittest_dir:-./}" -path "*${unittest_dir:-tests/}*" -name 'test_*.sh' 2>/dev/null; then
              unittest__print_debug 'TESTS NOT FOUND' \
                  "I was looking for 'test_*.sh' files inside '${unittest_dir:-tests/}' directory using:" \
                  "    $ find \"${unittest_dir:-./}\" -path \"*${unittest_dir:-tests/}*\" -name 'test_*.sh' -print" \
@@ -170,15 +169,16 @@ unittest__run() {
     # prefix: utt8r_
 
     UNITTEST_STATUS=0
-    for utt8r_testfile in $(cat -); do
+    while read -r utt8r_testfile; do
         (
-            utt8r_beforeAll=$(sed -n 's/^[ \t]*\(beforeAll\)[ \t]*(.*/\1/p' ${utt8r_testfile})
-            utt8r_afterAll=$(sed -n 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' ${utt8r_testfile})
-            utt8r_beforeEach=$(sed -n -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' ${utt8r_testfile})
-            utt8r_afterEach=$(sed -n -e 's/^[ \t]*\(afterEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(tearDown\)[ \t]*(.*/\1/p' ${utt8r_testfile})
-            utt8r_tests=$(sed -n 's/^[ \t]*\(x\{0,1\}test_[^(]*\)(.*/\1/p' ${utt8r_testfile})
+            utt8r_beforeAll=$(sed -n 's/^[ \t]*\(beforeAll\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
+            utt8r_afterAll=$(sed -n 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
+            utt8r_beforeEach=$(sed -n -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
+            utt8r_afterEach=$(sed -n -e 's/^[ \t]*\(afterEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(tearDown\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
+            utt8r_tests=$(sed -n 's/^[ \t]*\(x\{0,1\}test_[^(]*\)(.*/\1/p' "${utt8r_testfile}")
 
-            . ${utt8r_testfile}
+			# shellcheck source=/dev/null
+            . "${utt8r_testfile}"
             ${utt8r_beforeAll}
             for _current_testcase in ${utt8r_tests}; do
                 UNITTEST_CURRENT="${utt8r_testfile#./}:${_current_testcase}"
@@ -217,7 +217,7 @@ unittest__run() {
 
 {
     # color output by default: on supported terminals when NO_COLOR is not set
-    if [ -z "${NO_COLOR}" ] && [ $(tput colors) -lt 8 ]; then
+    if [ -z "${NO_COLOR}" ] && [ "$(tput colors)" -lt 8 ]; then
         NO_COLOR='YES'
     fi
 
@@ -242,7 +242,7 @@ unittest__run() {
                     ;;
 
                 -v|--version)
-                    printf 'unittest 22.0\n' >&2
+                    printf 'unittest 23.0\n' >&2
                     exit 0
                     ;;
                 *)  # specified directory/file
