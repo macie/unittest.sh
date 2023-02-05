@@ -8,7 +8,7 @@ _Unittest is the standard test runner._
 It follows the unix philosophy with a modern touch, so it is:
 
 - easy to use: readable elm-inspired error messages & colorized output (if applicable)
-- easy to package: POSIX-compatible & MIT license
+- easy to package: POSIX-compliant & MIT license
 - easy to extend: with pipelines & standard unix tools
 - easy to replace: tests can be run manually (see: _[Brief theory of shell testing](#brief-theory-of-shell-testing)_).
 
