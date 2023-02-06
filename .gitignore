@@ -1,0 +1,17 @@
+# .gitignore whitelist
+
+# Ignore everything
+*
+
+# But not these files...
+!/.gitignore
+!README.md
+!CONTRIBUTING.md
+!LICENSE
+
+!.circleci/*
+
+!unittest
+!tests/
+!tests/*.sh
+
