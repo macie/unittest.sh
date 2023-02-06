@@ -243,7 +243,7 @@ unittest__run() {
                     ;;
 
                 -v|--version)
-                    printf 'unittest 23.1\n' >&2
+                    printf 'unittest 23.2\n' >&2
                     exit 0
                     ;;
                 *)  # specified directory/file
@@ -259,7 +259,7 @@ unittest__run() {
     esac
 
     unittest__print_debug 'INVALID USAGE' \
-        "I cannot understand '$@' option. Did you wanted to use option or misspelled file/directory?" \
+        "I cannot understand '$*' option. Did you want to use option or did you misspell file/directory?" \
         'Hint: Find valid usage with:' \
         '    $ unittest -h'
     exit 64  # EX_USAGE
