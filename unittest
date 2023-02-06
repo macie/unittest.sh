@@ -21,7 +21,7 @@ unittest__print_result() {
     utt9t_color_location=''
     utt9t_color_status=''
 
-    if [ -t 1 ] && [ -z "${NO_COLOR}" ]; then  # stdout is interactive terminal
+    if { [ -n "${CLICOLOR_FORCE}" ] && [ "${CLICOLOR_FORCE}" -ne 0 ]; } || { [ -t 1 ] && [ -z "${NO_COLOR}" ]; }; then  # stdout is interactive terminal
         utt9t_color_default='\033[0m'
         case $2 in
             PASS)  # location: default; status: green
@@ -52,7 +52,7 @@ unittest__print_debug() {
     utt13o_color=''
     utt13o_color_default=''
 
-    if [ -t 2 ] && [ -z "${NO_COLOR}" ]; then  # stderr is interactive terminal
+    if { [ -n "${CLICOLOR_FORCE}" ] && [ "${CLICOLOR_FORCE}" -ne 0 ]; } || { [ -t 2 ] && [ -z "${NO_COLOR}" ]; }; then  # stderr is interactive terminal
         utt13o_color='\033[34m'  # blue
         utt13o_color_default='\033[0m'
         utt13o_color_quote='\033[37m'  # gray
@@ -62,8 +62,9 @@ unittest__print_debug() {
 
     shift 1
     for utt13o_paragraph in "$@"; do
+        # shellcheck disable=SC2059
         case ${utt13o_paragraph} in
-            ' '*) printf '%s' "${utt13o_color_quote}" >&2 ;;
+            ' '*) printf "${utt13o_color_quote}" >&2 ;;
             *)  ;;
         esac
         printf "%s${utt13o_color_default}\n\n" "${utt13o_paragraph}" >&2
@@ -242,7 +243,7 @@ unittest__run() {
                     ;;
 
                 -v|--version)
-                    printf 'unittest 23.0\n' >&2
+                    printf 'unittest 23.1\n' >&2
                     exit 0
                     ;;
                 *)  # specified directory/file
