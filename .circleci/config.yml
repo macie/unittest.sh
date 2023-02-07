@@ -7,8 +7,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "run tests"
-          command: ./unittest
+          name: "run tests and shellcheck"
+          command: make
 
 workflows:
   version: 2

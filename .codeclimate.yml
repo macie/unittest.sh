@@ -1,8 +1,6 @@
 version: "2"
 
 plugins:
-  shellcheck:
-    enabled: true
   fixme:
     enabled: true
   markdownlint:
