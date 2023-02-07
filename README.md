@@ -1,7 +1,6 @@
 # unittest
 
 [![Build Status](https://dl.circleci.com/status-badge/img/gh/macie/unittest.sh/tree/master.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/macie/unittest.sh/tree/master)
-[![Maintainability](https://api.codeclimate.com/v1/badges/8af95532e36373322d1c/maintainability)](https://codeclimate.com/github/macie/unittest.sh/maintainability)
 
 _Unittest is the standard test runner._
 
