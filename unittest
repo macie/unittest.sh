@@ -4,7 +4,7 @@
 #
 # https://github.com/macie/unittest.sh
 #
-# Copyright (c) 2014 Maciej Żok <maciek.zok@gmail.com>
+# Copyright (c) 2014-2023 Maciej Żok <maciek.zok@gmail.com>
 # MIT License (http://opensource.org/licenses/MIT)
 
 
@@ -176,7 +176,7 @@ unittest__run() {
             utt8r_afterAll=$(sed -n 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
             utt8r_beforeEach=$(sed -n -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
             utt8r_afterEach=$(sed -n -e 's/^[ \t]*\(afterEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(tearDown\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
-            utt8r_tests=$(sed -n 's/^[ \t]*\(x\{0,1\}test_[^(]*\)(.*/\1/p' "${utt8r_testfile}")
+            utt8r_tests=$(sed -n 's/^[ \t]*\(x\{0,1\}test_[^(=]*\)(.*/\1/p' "${utt8r_testfile}")
 
 			# shellcheck source=/dev/null
             . "${utt8r_testfile}"
@@ -243,7 +243,7 @@ unittest__run() {
                     ;;
 
                 -v|--version)
-                    printf 'unittest 23.2\n' >&2
+                    printf 'unittest 23.3\n' >&2
                     exit 0
                     ;;
                 *)  # specified directory/file
