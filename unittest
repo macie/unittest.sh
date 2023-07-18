@@ -217,8 +217,10 @@ unittest__run() {
 #
 
 {
-    # color output by default: on supported terminals when NO_COLOR is not set
-    if [ -z "${NO_COLOR}" ] && [ "$(tput colors)" -lt 8 ]; then
+    # Color output by default: on supported terminals when NO_COLOR is not set.
+    # Supported terminals are recognized based on TERM variable. When TERM is
+    # not set (for example inside CI environment) we assume that terminal is dumb.
+    if [ -z "${NO_COLOR}" ] && [ "$(TERM=${TERM:-dumb} tput colors)" -lt 8 ]; then
         NO_COLOR='YES'
     fi
 
@@ -243,7 +245,7 @@ unittest__run() {
                     ;;
 
                 -v|--version)
-                    printf 'unittest 23.3\n' >&2
+                    printf 'unittest 23.7\n' >&2
                     exit 0
                     ;;
                 *)  # specified directory/file
