@@ -7,5 +7,6 @@ test_var=$(echo 123)
 
 test_issue11() {
     # unittest version message and tput errors are written to stderr
+    #shellcheck disable=SC1007
     test "$(TERM= ./unittest -v 2>&1 | wc -l)" -eq 1
 }
