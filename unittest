@@ -78,6 +78,7 @@ unittest__print_debug() {
 #   ASSERTIONS
 #
 
+# shellcheck disable=SC2317
 test() {
     # same arguments as command test(1)
     UT4e1_test_error_msg=$(/bin/test "$@" 2>&1)

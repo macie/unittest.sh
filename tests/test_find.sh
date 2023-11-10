@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# shellcheck disable=SC2317
 beforeAll() {
     find() {  # find mock
         case "$1" in
