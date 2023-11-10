@@ -4,19 +4,19 @@
 
 _Unittest is the standard test runner._
 
-It follows the unix philosophy with a modern touch, so it is:
+It follows the Unix philosophy with a modern touch, so it is:
 
-- easy to use: readable elm-inspired error messages & colorized output (if applicable)
+- easy to use: readable elm-inspired error messages & colourized output (if applicable)
 - easy to package: POSIX-compliant & MIT license
-- easy to extend: with pipelines & standard unix tools
+- easy to extend: with pipelines & standard Unix tools
 - easy to replace: tests can be run manually (see: _[Brief theory of shell testing](#brief-theory-of-shell-testing)_).
 
-Its simplicity makes it useful not only for testing shell scripts, but also for black-box testing of commands written
+Its simplicity makes it useful not only for testing shell scripts but also for black-box testing of commands written
 in any language.
 
 ## Usage
 
-With basic call, it searches inside `tests\` directory for `test_*.sh` files with `test_*` functions:
+With a basic call, it searches inside `tests\` directory for `test_*.sh` files with `test_*` functions:
 
 ```bash
 $ unittest
@@ -25,7 +25,7 @@ tests/test_asserts.sh:test_assertEqual_unequal_ints	PASS
 ...
 ```
 
-Result is reported to stdout. Non-zero exit code indicates, that some tests has failed. To be passed,
+The result is reported to stdout. Non-zero exit code indicates, that some tests have failed. To be passed,
 each test should exit with 0 code.
 
 In addition to `test_*` functions, you can also define functions named:
@@ -34,8 +34,8 @@ In addition to `test_*` functions, you can also define functions named:
 - `beforeEach` and `afterEach` - test preparation/cleanup code executed before/after each test function
 - `beforeAll` and `afterAll` - test preparation/cleanup code executed once per file, before/after all test functions.
 
-Tests can call `test` function, which extends [test](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/test.html)
-command with readable error report (to stderr):
+Tests can call the `test` function, which extends the [test](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/test.html)
+command with a readable error report (to stderr):
 
 ```bash
 $ unittest
@@ -55,7 +55,7 @@ tests/test_output.sh:test_status_fail	PASS
 ...
 ```
 
-For example tests see files inside [tests directory](./tests).
+For example, tests see files inside the [tests directory](./tests).
 
 ## Install
 
@@ -74,23 +74,23 @@ chmod +x unittest
 
 ## Alternatives
 
-Robert Lehmann created list of [the most popular shell testing tools](https://github.com/lehmannro/assert.sh#related-projects).
-The main difference between them and this project: _unittest_ is idiomatic to unix. It uses only POSIX commands
-and standard output with simple format. So the result can be easily transformed or extended.
+Robert Lehmann created a list of [the most popular shell testing tools](https://github.com/lehmannro/assert.sh#related-projects).
+The main difference between them and this project: _unittest_ is idiomatic to Unix. It uses only POSIX commands
+and standard output in a simple format. So the result can be easily transformed or extended.
 
 The only comparable alternative is to run tests manually (as described below).
 
 ### Brief theory of shell testing
 
-From its beginning, unix is test-friendly. The simplest shell test is based on exit codes:
+From its beginning, Unix is test-friendly. The simplest shell test is based on exit codes:
 
 ```bash
 $ command && echo PASS || echo FAIL
 PASS
 ```
 
-Commands which don't crash by default are quite common. Much useful tests verifies what command do (with
-a little help from standard unix tools):
+Commands which don't crash by default are relatively common. Many practical tests verify what command do (with
+a little help from standard Unix tools):
 
 ```bash
 $ [ -n "$(command)" ] && echo PASS || echo FAIL
@@ -113,7 +113,7 @@ test_output() {
 EOF
 ```
 
-Exit code of function is the same as exit code of the last command in function, so after sourcing we can use them as before:
+The exit code of the function is the same as the exit code of the last command in the function, so after sourcing we can use them as before:
 
 ```bash
 $ . test_command.sh
