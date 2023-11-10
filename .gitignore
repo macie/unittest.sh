@@ -3,16 +3,18 @@
 # Ignore everything
 *
 
-# But not these files...
+# Allow CI configs
 !/.gitignore
-!README.md
-!CONTRIBUTING.md
-!LICENSE
+!/Makefile
+!/.github/workflows/*.yml
 
-!.circleci/*
-!Makefile
-
+# Allow source code...
 !unittest
-!tests/
-!tests/*.sh
+!*.sh
 
+!README.md
+!LICENSE
+!CONTRIBUTING.md
+
+# ...also in subdirectories
+!*/

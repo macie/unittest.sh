@@ -1,6 +1,6 @@
 # unittest
 
-[![Build Status](https://dl.circleci.com/status-badge/img/gh/macie/unittest.sh/tree/master.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/macie/unittest.sh/tree/master)
+[![Quality check status](https://github.com/macie/unittest.sh/actions/workflows/check.yml/badge.svg)](https://github.com/macie/unittest.sh/actions/workflows/check.yml)
 
 _Unittest is the standard test runner._
 
@@ -16,7 +16,7 @@ in any language.
 
 ## Usage
 
-With a basic call, it searches inside `tests\` directory for `test_*.sh` files with `test_*` functions:
+With a basic call, it searches inside `tests/` directory for `test_*.sh` files with `test_*` functions:
 
 ```bash
 $ unittest
@@ -57,7 +57,7 @@ tests/test_output.sh:test_status_fail	PASS
 
 For example, tests see files inside the [tests directory](./tests).
 
-## Install
+## Installation
 
 Using `curl`:
 ```bash
@@ -71,6 +71,15 @@ or with `wget`:
 wget https://raw.githubusercontent.com/macie/unittest.sh/master/unittest
 chmod +x unittest
 ```
+
+## Development
+
+Use `make` (GNU or BSD):
+
+- `make` - check dependencies
+- `make test` - runs test
+- `make check` - static code analysis
+- `make info` - print system info (useful for debugging).
 
 ## Alternatives
 
@@ -122,4 +131,3 @@ PASS
 ```
 
 Finally, all tests from a file can be run with some `grep` and loop. And this is basically `unittest`.
-
