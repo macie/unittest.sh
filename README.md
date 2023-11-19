@@ -84,6 +84,10 @@ Use `make` (GNU or BSD):
 - `make release` - tag latest commit as a new release
 - `make info` - print system info (useful for debugging).
 
+### Versioning
+
+_unittest_ is versioned according to the scheme `YY.0M.MICRO` ([calendar versioning](https://calver.org/)). Releases are tagged in Git.
+
 ## Alternatives
 
 Robert Lehmann created a list of [the most popular shell testing tools](https://github.com/lehmannro/assert.sh#related-projects).
