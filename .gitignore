@@ -9,7 +9,7 @@
 !/.github/workflows/*.yml
 
 # Allow source code...
-!unittest
+!/unittest
 !*.sh
 
 !README.md
