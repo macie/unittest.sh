@@ -76,9 +76,12 @@ chmod +x unittest
 
 Use `make` (GNU or BSD):
 
-- `make` - check dependencies
-- `make test` - runs test
-- `make check` - static code analysis
+- `make` - run checks
+- `make test` - run test
+- `make check` - perform static code analysis
+- `make dist` - prepare for distributing
+- `make clean` - remove distributed artifacts
+- `make release` - tag latest commit as a new release
 - `make info` - print system info (useful for debugging).
 
 ## Alternatives

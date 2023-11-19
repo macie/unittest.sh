@@ -1,0 +1,49 @@
+name: Publish
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run checks
+        run: make
+
+      - run: make dist
+
+      - name: Save build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: dist/
+          retention-days: 14
+          if-no-files-found: error
+
+  release:
+    needs: build
+
+    name: Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Extract build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artifacts
+
+      - name: Prepare release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          generateReleaseNotes: true
+          artifacts: "*"
