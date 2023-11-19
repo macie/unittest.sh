@@ -59,18 +59,33 @@ For example, tests see files inside the [tests directory](./tests).
 
 ## Installation
 
-Using `curl`:
-```bash
-curl -fLO https://raw.githubusercontent.com/macie/unittest.sh/master/unittest
-chmod +x unittest
-```
+>The instruction is for Linux. On different OSes, you may need to use different
+>commands
 
-or with `wget`:
+1. Download [latest stable release from GitHub](https://github.com/macie/unittest.sh/releases/latest):
 
-```bash
-wget https://raw.githubusercontent.com/macie/unittest.sh/master/unittest
-chmod +x unittest
-```
+    ```bash
+    wget https://github.com/macie/unittest.sh/releases/latest/download/unittest
+    ```
+
+2. (OPTIONAL) Verify downloading:
+
+    ```bash
+    wget https://github.com/macie/unittest.sh/releases/latest/download/unittest.sha256sum
+    sha256sum -c unittest.sha256sum
+    ```
+
+3. Set execute permission:
+
+    ```bash
+    chmod +x unittest
+    ```
+
+4. Move to directory from `PATH` environment variable:
+
+    ```bash
+    mv unittest /usr/local/bin/
+    ```
 
 ## Development
 
