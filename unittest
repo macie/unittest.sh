@@ -234,19 +234,22 @@ unittest__run() {
             case $1 in
                 -h|--help)
                     cat >&2 <<-'EOF'
-			unittest - unit tests framework for shell scripts.
-			Usage:
-			  unittest [options] [test_directory|test_file]
+						unittest - unit tests framework for shell scripts.
 
-			Options:
-			  -h, --help                      Show this help and exit.
-			  -v, --version                   Show version number and exit.
-			EOF
+						Usage:
+						  unittest [options] [test_directory | test_file]
+
+						Options:
+						  -h, --help           Show this help and exit.
+						  -v, --version        Show version number and exit.
+
+						Without any arguments it will run all tests from 'tests' directory.
+						EOF
                     exit 0
                     ;;
 
                 -v|--version)
-                    printf 'unittest 23.7\n' >&2
+                    printf 'unittest 23.11\n' >&2
                     exit 0
                     ;;
                 *)  # specified directory/file
