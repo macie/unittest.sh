@@ -27,6 +27,11 @@ test:
 	@echo '# Unit tests: $(TEST)' >&2
 	@$(TEST)
 
+install:
+	@echo '# Install in /usr/local/bin' >&2
+	@mkdir -p /usr/local/bin
+	@cp unittest /usr/local/bin/
+
 dist: unittest
 	@echo '# Create release artifacts in ./dist' >&2
 	@mkdir -p ./dist

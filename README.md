@@ -87,6 +87,14 @@ For example, tests see files inside the [tests directory](./tests).
     mv unittest /usr/local/bin/
     ```
 
+### Development version
+
+```bash
+git clone git@github.com:macie/unittest.sh.git
+cd unittest.sh
+make && make install
+```
+
 ## Development
 
 Use `make` (GNU or BSD):
@@ -94,6 +102,7 @@ Use `make` (GNU or BSD):
 - `make` - run checks
 - `make test` - run test
 - `make check` - perform static code analysis
+- `make install` - install in `/usr/local/bin`
 - `make dist` - prepare for distributing
 - `make clean` - remove distributed artifacts
 - `make release` - tag latest commit as a new release
