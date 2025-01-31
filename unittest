@@ -2,10 +2,8 @@
 #
 # unittest - unit tests framework for shell scripts.
 #
-# https://github.com/macie/unittest.sh
-#
-# Copyright (c) 2014-2023 Maciej Żok <maciek.zok@gmail.com>
-# MIT License (http://opensource.org/licenses/MIT)
+# SPDX-FileCopyrightText: 2014 Maciej Żok <https://github.com/macie/unittest.sh>
+# SPDX-License-Identifier: MIT
 
 
 #
