@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2014 Maciej Żok <https://github.com/macie/unittest.sh>
+# SPDX-License-Identifier: MIT
 .POSIX:
 .SUFFIXES:
 

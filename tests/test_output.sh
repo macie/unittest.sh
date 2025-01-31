@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-FileCopyrightText: 2014 Maciej Żok <https://github.com/macie/unittest.sh>
+# SPDX-License-Identifier: MIT
 
 # shellcheck disable=SC2030,SC2031
 

@@ -1,5 +1,6 @@
 #!/bin/sh
-
+# SPDX-FileCopyrightText: 2014 Maciej Żok <https://github.com/macie/unittest.sh>
+# SPDX-License-Identifier: MIT
 
 test_equal_ints() {
     test 11 -eq 11
