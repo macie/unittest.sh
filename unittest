@@ -5,6 +5,7 @@
 # SPDX-FileCopyrightText: 2014 Maciej Żok <https://github.com/macie/unittest.sh>
 # SPDX-License-Identifier: MIT
 
+readonly UNITTEST_VERSION='local-dev'
 
 #
 #   MESSAGES
@@ -247,7 +248,7 @@ unittest__run() {
 					;;
 
 				-v|--version)
-					printf 'unittest 23.11\n' >&2
+					printf 'unittest %s\n' "$UNITTEST_VERSION" >&2
 					exit 0
 					;;
 				*)  # specified directory/file
