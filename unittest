@@ -176,7 +176,7 @@ unittest__run() {
 			utt8r_afterAll=$(sed -n 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
 			utt8r_beforeEach=$(sed -n -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
 			utt8r_afterEach=$(sed -n -e 's/^[ \t]*\(afterEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(tearDown\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
-			utt8r_tests=$(sed -n 's/^[ \t]*\(x\{0,1\}test_[^(=]*\)(.*/\1/p' "${utt8r_testfile}")
+			utt8r_tests=$(awk '/^[^{]*}/ { nesting-- } /^[ \t]*x{0,1}test_[^(=]*\(.*/ { if (nesting == 0) { print $1 } } /{[^}]*$/ { nesting++ }' "${utt8r_testfile}" | tr -d '(){}')
 
 			# shellcheck source=/dev/null
 			. "${utt8r_testfile}"
