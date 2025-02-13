@@ -31,6 +31,10 @@ beforeAll() {
 	EOF
 }
 
+beforeEach() {
+	unset NO_COLOR CLICOLOR_FORCE
+}
+
 afterAll() {
 	rm -rf "${FIXTURES}"
 }
@@ -45,16 +49,16 @@ test_status_pass() {
 	test $? -eq 0 && test "${result}" = "${TESTCASE_SUCCESS}:test_true	PASS"
 }
 
-test_status_pass_color_force_on() {
+test_status_pass_nocolor() {
+	result=$(NO_COLOR=1 ./unittest "$TESTCASE_SUCCESS")
+
+	test $? -eq 0 && test "${result}" = "${TESTCASE_SUCCESS}:test_true	PASS"
+}
+
+test_status_pass_color_force_set() {
 	result=$(CLICOLOR_FORCE=1 ./unittest "$TESTCASE_SUCCESS" | awk '/\033/')
 
 	test $? -eq 0 && test -n "${result}"
-}
-
-test_status_pass_color_force_off() {
-	result=$(CLICOLOR_FORCE=0 ./unittest "$TESTCASE_SUCCESS" | awk '/\033/')
-
-	test $? -eq 0 && test -z "${result}"
 }
 
 test_status_pass_color_force_unset() {
@@ -69,16 +73,16 @@ test_status_fail() {
 	test $? -eq 1 && test "${result}" = "${TESTCASE_FAILURE}:test_false	FAIL"
 }
 
-test_status_fail_color_force_on() {
+test_status_fail_nocolor() {
+	result=$(NO_COLOR=1 ./unittest "$TESTCASE_FAILURE")
+
+	test $? -eq 1 && test "${result}" = "${TESTCASE_FAILURE}:test_false	FAIL"
+}
+
+test_status_fail_color_force_set() {
 	result=$(CLICOLOR_FORCE=1 ./unittest "$TESTCASE_FAILURE" | awk '/\033/')
 
 	test $? -eq 0 && test -n "${result}"
-}
-
-test_status_fail_color_force_off() {
-	result=$(CLICOLOR_FORCE=0 ./unittest "$TESTCASE_FAILURE" | awk '/\033/')
-
-	test $? -eq 0 && test -z "${result}"
 }
 
 test_status_fail_color_force_unset() {
@@ -93,41 +97,32 @@ test_status_skip() {
 	test $? -eq 0 && test "${result}" = "${TESTCASE_SKIPPED}:xtest_skipped	SKIP"
 }
 
-test_status_skip_color_force_on() {
+test_status_skip_nocolor() {
+	result=$(NO_COLOR=1 ./unittest "$TESTCASE_SKIPPED")
+
+	test $? -eq 0 && test "${result}" = "${TESTCASE_SKIPPED}:xtest_skipped	SKIP"
+}
+
+test_status_skip_color_force_set() {
 	result=$(CLICOLOR_FORCE=1 ./unittest "$TESTCASE_SKIPPED" | awk '/\033/')
 
 	test $? -eq 0 && test -n "${result}"
 }
 
-test_status_skip_color_force_off() {
-	result=$(CLICOLOR_FORCE=0 ./unittest "$TESTCASE_SKIPPED" | awk '/\033/')
-
-	test $? -eq 0 && test -z "${result}"
-}
-
-test_status_unknown() {
-	result=$(unittest__print_result 'other test location' 'OUCH')
-
-	test $? -eq 0 && test "${result}" = 'other test location	OUCH'
-}
-
-test_status_unknown_color_force_on() {
-	# shellcheck disable=SC2030
-	result=$(export CLICOLOR_FORCE=1; unittest__print_result 'Location' 'OUCH' | awk '/\033/')
+test_status_unknown_color_on() {
+	result=$(UNITTEST_COLOR='on' unittest__print_result 'Location' 'OUCH' | awk '/\033/')
 
 	test $? -eq 0 && test -n "${result}"
 }
 
-test_status_unknown_color_force_off() {
-	# shellcheck disable=SC2030,SC2031
-	result=$(export CLICOLOR_FORCE=0; unittest__print_result 'Location' 'OUCH' | awk '/\033/')
+test_status_unknown_color_off() {
+	result=$(UNITTEST_COLOR='off' unittest__print_result 'Location' 'OUCH' | awk '/\033/')
 
 	test $? -eq 0 && test -z "${result}"
 }
 
-test_status_unknown_color_force_unset() {
-	# shellcheck disable=SC2031
-	result=$(export CLICOLOR_FORCE=; unittest__print_result 'Location' 'OUCH' | awk '/\033/')
+test_status_unknown_color_auto() {
+	result=$(UNITTEST_COLOR='auto' unittest__print_result 'Location' 'OUCH' | awk '/\033/')
 
 	test $? -eq 0 && test -z "${result}"
 }
@@ -144,16 +139,10 @@ test_debug() {
 	test $? -eq 0 && test "${result}" = "${expected}"
 }
 
-test_debug_color_force_on() {
+test_debug_color_force_set() {
 	result=$(CLICOLOR_FORCE=1 ./unittest "$TESTCASE_TEST_FAILURE" 2>&1 | awk '/\033/')
 
 	test $? -eq 0 && test -n "${result}"
-}
-
-test_debug_color_force_off() {
-	result=$(CLICOLOR_FORCE=0 ./unittest "$TESTCASE_TEST_FAILURE" 2>&1 | awk '/\033/')
-
-	test $? -eq 0 && test -z "${result}"
 }
 
 test_debug_color_force_unset() {

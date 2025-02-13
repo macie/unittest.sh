@@ -5,7 +5,10 @@
 # SPDX-FileCopyrightText: 2014 Maciej Żok <https://github.com/macie/unittest.sh>
 # SPDX-License-Identifier: MIT
 
+
+UNITTEST_COLOR='auto'  # 'on' | 'off' | 'auto'
 readonly UNITTEST_VERSION='local-dev'
+
 
 #
 #   MESSAGES
@@ -20,7 +23,7 @@ unittest__print_result() {
 	utt9t_color_location=''
 	utt9t_color_status=''
 
-	if { [ -n "${CLICOLOR_FORCE}" ] && [ "${CLICOLOR_FORCE}" -ne 0 ]; } || { [ -t 1 ] && [ -z "${NO_COLOR}" ]; }; then  # stdout is interactive terminal
+	if [ "$UNITTEST_COLOR" = 'on' ] || { [ -t 1 ] && [ "$UNITTEST_COLOR" = 'auto' ]; }; then  # stdout is interactive terminal
 		utt9t_color_default='\033[0m'
 		case $2 in
 			PASS)  # location: default; status: green
@@ -51,7 +54,7 @@ unittest__print_debug() {
 	utt13o_color=''
 	utt13o_color_default=''
 
-	if { [ -n "${CLICOLOR_FORCE}" ] && [ "${CLICOLOR_FORCE}" -ne 0 ]; } || { [ -t 2 ] && [ -z "${NO_COLOR}" ]; }; then  # stderr is interactive terminal
+	if [ "$UNITTEST_COLOR" = 'on' ] || { [ -t 2 ] && [ "$UNITTEST_COLOR" = 'auto' ]; }; then  # stderr is interactive terminal
 		utt13o_color='\033[34m'  # blue
 		utt13o_color_default='\033[0m'
 		utt13o_color_quote='\033[37m'  # gray
@@ -220,8 +223,13 @@ unittest__run() {
 	# Color output by default: on supported terminals when NO_COLOR is not set.
 	# Supported terminals are recognized based on TERM variable. When TERM is
 	# not set (for example inside CI environment) we assume that terminal is dumb.
-	if [ -z "${NO_COLOR}" ] && [ "$(TERM=${TERM:-dumb} tput colors)" -lt 8 ]; then
-		NO_COLOR='YES'
+	# NO_COLOR has precedence over CLICOLOR_FORCE. See: https://bixense.com/clicolors/
+	if [ -n "${NO_COLOR:-}" ]; then
+		UNITTEST_COLOR='off'
+	elif [ -n "${CLICOLOR_FORCE:-}" ]; then
+		UNITTEST_COLOR='on'
+	elif [ "$(TERM=${TERM:-dumb} tput colors)" -lt 8 ]; then
+		UNITTEST_COLOR='off'
 	fi
 
 	case $# in
