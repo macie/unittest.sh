@@ -4,7 +4,7 @@
 #
 # SPDX-FileCopyrightText: 2014 Maciej Żok <https://github.com/macie/unittest.sh>
 # SPDX-License-Identifier: MIT
-
+set -u
 
 UNITTEST_COLOR='auto'  # 'on' | 'off' | 'auto'
 readonly UNITTEST_VERSION='local-dev'
@@ -53,6 +53,7 @@ unittest__print_debug() {
 	# prefix: utt13o_
 	utt13o_color=''
 	utt13o_color_default=''
+	utt13o_color_quote=''
 
 	if [ "$UNITTEST_COLOR" = 'on' ] || { [ -t 2 ] && [ "$UNITTEST_COLOR" = 'auto' ]; }; then  # stderr is interactive terminal
 		utt13o_color='\033[34m'  # blue
@@ -64,7 +65,7 @@ unittest__print_debug() {
 
 	shift 1
 	for utt13o_paragraph in "$@"; do
-		# shellcheck disable=SC2059
+		# shellcheck disable=SC2059 # '%b' is not portable yet
 		case ${utt13o_paragraph} in
 			' '*) printf "${utt13o_color_quote}" >&2 ;;
 			*)  ;;
@@ -138,7 +139,7 @@ test() {
 #     use defaults instead.
 unittest__test_files() {
 	{
-		if [ "$1" = '-' ]; then
+		if [ "${1-}" = '-' ]; then
 			cat -
 		else
 			printf '%s\n' "$@"
