@@ -6,85 +6,79 @@
 # SPDX-License-Identifier: MIT
 set -u
 
-UNITTEST_COLOR='auto'  # 'on' | 'off' | 'auto'
 readonly UNITTEST_VERSION='local-dev'
+UNITTEST_CURRENT='unknown_testfile:unknown_testfunc'
+UNITTEST_COLOR='auto'  # 'auto' | 'on' | 'off'
 
 
 #
 #   MESSAGES
 #
 
-unittest__print_result() {
 	# Write test status message to stdout
-	# $1 - test location
-	# $2 - test status
-	# prefix: utt9t_
-	utt9t_color_default=''
-	utt9t_color_location=''
-	utt9t_color_status=''
+unittest__print_result() (
+	readonly testcase="${1:-unknown}"
+	readonly status="${2:-????}"
 
-	if [ "$UNITTEST_COLOR" = 'on' ] || { [ -t 1 ] && [ "$UNITTEST_COLOR" = 'auto' ]; }; then  # stdout is interactive terminal
-		utt9t_color_default='\033[0m'
-		case $2 in
-			PASS)  # location: default; status: green
-				utt9t_color_location='\033[0m'
-				utt9t_color_status='\033[32m'
+	if [ "$UNITTEST_COLOR" = 'on' ] || { [ -t 1 ] && [ "$UNITTEST_COLOR" = 'auto' ]; }; then
+		readonly color_normal='\033[0m'
+		case $status in
+			PASS)
+				readonly color_testcase='\033[0m'  # default
+				readonly color_status='\033[32m'  # green
 				;;
-			FAIL)  # location: red; status: white on red
-				utt9t_color_location='\033[31m'
-				utt9t_color_status='\033[97;41m'
+			FAIL)
+				readonly color_testcase='\033[31m'  # red
+				readonly color_status='\033[97;41m'  # white on red
 				;;
-			SKIP)  # location: gray; status: gray
-				utt9t_color_location='\033[37m'
-				utt9t_color_status='\033[37m'
+			SKIP)
+				readonly color_testcase='\033[37m'  # gray
+				readonly color_status='\033[37m'  # gray
+				;;
+			*)
+				readonly color_testcase='\033[90m'  # dark gray
+				readonly color_status='\033[97;100m'  # white on dark gray
 				;;
 		esac
 	fi
 
-	printf "${utt9t_color_location}%s\t${utt9t_color_status}%s${utt9t_color_default}\n" "$1" "$2"
+	printf "${color_testcase-}%s\t${color_status-}%s${color_normal-}\n" "$testcase" "$status"
 
-	unset -v utt9t_color_default utt9t_color_location utt9t_color_status
 	return 0
-}
+)
 
-unittest__print_debug() {
-	# $1 - category
-	# $2-... - paragraphs
-	# prefix: utt13o_
-	utt13o_color=''
-	utt13o_color_default=''
-	utt13o_color_quote=''
+unittest__print_debug() (
+	readonly header="${1:-'UNKNOWN ERROR'}"
+	shift 1  # $@ - paragraphs
 
-	if [ "$UNITTEST_COLOR" = 'on' ] || { [ -t 2 ] && [ "$UNITTEST_COLOR" = 'auto' ]; }; then  # stderr is interactive terminal
-		utt13o_color='\033[34m'  # blue
-		utt13o_color_default='\033[0m'
-		utt13o_color_quote='\033[37m'  # gray
+	if [ "$UNITTEST_COLOR" = 'on' ] || { [ -t 2 ] && [ "$UNITTEST_COLOR" = 'auto' ]; }; then
+		readonly color_normal='\033[0m'
+		readonly color_header='\033[34m'  # blue
+		readonly color_quote='\033[37m'  # gray
 	fi
 
-	printf "\n${utt13o_color}-- %s${utt13o_color_default}\n\n" "$1" >&2
+	printf "\n${color_header-}-- %s${color_normal-}\n\n" "$header" >&2
 
-	shift 1
-	for utt13o_paragraph in "$@"; do
+	for paragraph in "$@"; do
 		# shellcheck disable=SC2059 # '%b' is not portable yet
-		case ${utt13o_paragraph} in
-			' '*) printf "${utt13o_color_quote}" >&2 ;;
+		case ${paragraph} in
+			' '*) printf "${color_quote-}" >&2 ;;
 			*)  ;;
 		esac
-		printf "%s${utt13o_color_default}\n\n" "${utt13o_paragraph}" >&2
+		printf "%s${color_normal-}\n\n" "${paragraph}" >&2
 	done
 
-	unset -v utt13o_paragraph utt13o_color utt13o_color_default
 	return 0
-}
+)
 
 #
 #   ASSERTIONS
 #
 
 # shellcheck disable=SC2317
-test() {
+test() (
 	# same arguments as command test(1)
-	UT4e1_test_error_msg=$(/bin/test "$@" 2>&1)
+	error_msg=$(/bin/test "$@" 2>&1)
 	case $? in
 		0)  ;;
 		1)
@@ -99,7 +93,7 @@ test() {
 				'I tried to check' \
 				"    test$(printf " '%s'" "$@")" \
 				'but I got error with message:' \
-				"    ${UT4e1_test_error_msg}" \
+				"    ${error_msg}" \
 				'Did you use proper operator?' \
 				"Hint: Some operators requires specific type of values. Read 'man test' to learn more."
 			return 1
@@ -107,7 +101,7 @@ test() {
 	esac
 
 	return 0
-}
+)
 
 
 #
@@ -137,7 +131,7 @@ test() {
 # CAVEATS:
 #     Calling it inside pipeline without '-' will disregards standard input and
 #     use defaults instead.
-unittest__test_files() {
+unittest__test_files() (
 	{
 		if [ "${1-}" = '-' ]; then
 			cat -
@@ -145,21 +139,19 @@ unittest__test_files() {
 			printf '%s\n' "$@"
 		fi
 	 } |
-	 while read -r unittest_dir; do
-		 if ! find "${unittest_dir:-./}" -path "*${unittest_dir:-tests/}*" -name 'test_*.sh' 2>/dev/null; then
+	while read -r testdir; do
+		if ! find "${testdir:-./}" -path "*${testdir:-tests/}*" -name 'test_*.sh' 2>/dev/null; then
 			 unittest__print_debug 'TESTS NOT FOUND' \
-				 "I was looking for 'test_*.sh' files inside '${unittest_dir:-tests/}' directory using:" \
-				 "    $ find \"${unittest_dir:-./}\" -path \"*${unittest_dir:-tests/}*\" -name 'test_*.sh' -print" \
+				"I was looking for 'test_*.sh' files inside '${testdir:-tests/}' directory using:" \
+				"    $ find \"${testdir:-./}\" -path \"*${testdir:-tests/}*\" -name 'test_*.sh' -print" \
 				 'but instead of files I got an error with message:' \
-				 "    $(find "${unittest_dir:-./}" -path "*${unittest_dir:-tests/}*" -name 'test_*.sh' -print 2>&1)"
-			 unset -v unittest_dir
+				"    $(find "${testdir:-./}" -path "*${testdir:-tests/}*" -name 'test_*.sh' -print 2>&1)"
 			 return 1
 		 fi
-		 unset -v unittest_dir
 	 done
 
 	 return $?
-}
+)
 
 ##
 # Run tests from given files.
