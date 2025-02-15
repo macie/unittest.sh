@@ -75,21 +75,23 @@ unittest__print_debug() (
 #   ASSERTIONS
 #
 
-# shellcheck disable=SC2317
+# Drop-in replacement for test(1) command with user-friendly error messages.
+# It prints corresponding test location from UT_EXECUTED_TESTCASE global
+# variable (if available).
+# shellcheck disable=SC2317  # it shadows test command called inside test files
 test() (
-	# same arguments as command test(1)
 	error_msg=$(/bin/test "$@" 2>&1)
 	case $? in
 		0)  ;;
 		1)
-			unittest__print_debug "FAILED TEST [${UT_EXECUTED_TESTCASE:-'<unknown>'}]" \
+			unittest__print_debug "FAILED TEST${UT_EXECUTED_TESTCASE:+ [${UT_EXECUTED_TESTCASE}]}" \
 				'I expected:' \
 				"    test$(printf " '%s'" "$@")" \
 				'to be true, but the result was false.'
 			return 1
 			;;
 		*)
-			unittest__print_debug "INVALID ASSERTION [${UT_EXECUTED_TESTCASE:-'<unknown>'}]" \
+			unittest__print_debug "INVALID ASSERTION${UT_EXECUTED_TESTCASE:+ [${UT_EXECUTED_TESTCASE}]}" \
 				'I tried to check' \
 				"    test$(printf " '%s'" "$@")" \
 				'but I got error with message:' \
