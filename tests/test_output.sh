@@ -110,19 +110,19 @@ test_status_skip_color_force_set() {
 }
 
 test_status_unknown_color_on() {
-	result=$(UNITTEST_COLOR='on' unittest__print_result 'Location' 'OUCH' | awk '/\033/')
+	result=$(UT_COLOR_OUTPUT='on' unittest__print_result 'Location' 'OUCH' | awk '/\033/')
 
 	test $? -eq 0 && test -n "${result}"
 }
 
 test_status_unknown_color_off() {
-	result=$(UNITTEST_COLOR='off' unittest__print_result 'Location' 'OUCH' | awk '/\033/')
+	result=$(UT_COLOR_OUTPUT='off' unittest__print_result 'Location' 'OUCH' | awk '/\033/')
 
 	test $? -eq 0 && test -z "${result}"
 }
 
 test_status_unknown_color_auto() {
-	result=$(UNITTEST_COLOR='auto' unittest__print_result 'Location' 'OUCH' | awk '/\033/')
+	result=$(UT_COLOR_OUTPUT='auto' unittest__print_result 'Location' 'OUCH' | awk '/\033/')
 
 	test $? -eq 0 && test -z "${result}"
 }

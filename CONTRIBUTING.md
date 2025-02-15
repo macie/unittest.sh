@@ -1,16 +1,31 @@
 # Quick Guide
 
-We are using [Google's Shell Style Guide](https://google-styleguide.googlecode.com/svn/trunk/shell.xml) with some exceptions:
-
+In short: be consistent with existing code.
 
 ### Syntax
 
-* indentation: 1 tab (smaller script size than 4 spaces; consistent with `cat <<-EOF` idiom)
-* use POSIX shell (`#!/bin/sh`). Check [official guide](http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html), [hints from ubuntu team](https://wiki.ubuntu.com/DashAsBinSh), [hints from GreyCat](http://mywiki.wooledge.org/Bashism) and [tricks](http://www.etalabs.net/sh_tricks.html). Unittest.sh should work in: bash, zsh, dash and posh.
-* use [shellcheck](http://www.shellcheck.net/) and [checkbashisms](http://sourceforge.net/projects/checkbaskisms/).
-
+* indentation: 1 tab (smaller script size than 4 spaces; consistent with
+`cat <<-EOF` idiom)
+* use POSIX shell syntax. `unittest` meant to be able to run on any
+POSIX-compliant system. See more:
+    * [official guide](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html),
+    * [hints from ubuntu team](https://wiki.ubuntu.com/DashAsBinSh),
+    * [hints from GreyCat](http://mywiki.wooledge.org/Bashism)
+    * [tricks](http://www.etalabs.net/sh_tricks.html)
+    * [shellcheck](http://www.shellcheck.net/)
+    * [checkbashisms](http://sourceforge.net/projects/checkbaskisms/)
+* functions that don't modify global variables should be defined as subshells
+(with body inside `()`),e.g. `some_func() ( ... )`. This simplify variable
+lifecycle management
+* functions that modify global variables should be defined as curly braces
+functions (with body inside `{}`), e.g. `some_func() { ... }`. All variables
+defined inside function are global, so they should be unset after use,
+e.g. `unset -v ut_somevar`
 
 ### Naming convention
 
-* functions name in format: `ut_<namespace>__<function_name>` (eg. *ut_parser__find_functions*)
-* local variable are normal variables (without `local` or `typeset` declaration - POSIX!) but have special names: `ut<hash>__<local_variable_name>` where `<hash>` is first 3 character of sha1 sum of function name (eg. *utac4__message* inside of **ut_msg__error()** function). You can easily generate hash in terminal with command: `echo "function_name" | sha1sum | cut -c -3`
+* function names are lowercase with **unittest__** prefix,
+e.g. `unittest__print_result`
+* global variable names are uppercase with **UT_** prefix, e.g. `UT_VERSION`
+* local variable names inside curly braces functions are lowercase with **ut_**
+prefix,  e.g. `ut_i`

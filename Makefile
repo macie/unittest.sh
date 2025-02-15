@@ -71,7 +71,7 @@ dist:
 	@echo '# Copy CLI to $(DESTDIR)/$(CLI)' >&2
 	@mkdir -p "$(DESTDIR)"; cp "$(CLI)" "$(DESTDIR)/"
 	@echo '# Update version number to $(CLI_VERSION)' >&2
-	@sed -i 's/^\(CLI_VERSION *=\).*/\1"'$(CLI_VERSION)'"/' "$(DESTDIR)/$(CLI)"
+	@sed -i 's/^\(readonly UT_VERSION *=\).*/\1"'$(CLI_VERSION)'"/' "$(DESTDIR)/$(CLI)"
 	@echo '# Create checksum' >&2
 	@cd "$(DESTDIR)"; sha256sum "$(CLI)" > "$(CLI).sha256sum"
 
