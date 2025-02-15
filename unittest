@@ -15,7 +15,8 @@ UT_COLOR_OUTPUT='auto'  # 'auto' | 'on' | 'off'
 #   MESSAGES
 #
 
-# Write test status message to stdout
+# Write test status message to stdout in color when forced or on capable
+# interactive terminal (using UT_COLOR_OUTPUT global variable).
 unittest__print_result() (
 	readonly testcase="${1:-unknown}"
 	readonly status="${2:-????}"
@@ -47,6 +48,8 @@ unittest__print_result() (
 	return 0
 )
 
+# Write debug message to stderr in color: when forced or on capable
+# interactive terminal (using UT_COLOR_OUTPUT global variable).
 unittest__print_debug() (
 	readonly header="${1:-'UNKNOWN ERROR'}"
 	shift 1  # $@ - paragraphs
