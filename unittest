@@ -26,24 +26,24 @@ unittest__print_result() (
 		case $status in
 			PASS)
 				readonly color_testcase='\033[0m'  # default
-				readonly color_status='\033[32m'  # green
+				readonly color_status='\033[0;32m'  # green on default
 				;;
 			FAIL)
-				readonly color_testcase='\033[31m'  # red
+				readonly color_testcase='\033[0;31m'  # red on default
 				readonly color_status='\033[97;41m'  # white on red
 				;;
 			SKIP)
-				readonly color_testcase='\033[37m'  # gray
-				readonly color_status='\033[37m'  # gray
+				readonly color_testcase='\033[0;37m'  # gray on default
+				readonly color_status='\033[0;37m'  # gray on default
 				;;
 			*)
-				readonly color_testcase='\033[90m'  # dark gray
+				readonly color_testcase='\033[0;90m'  # dark gray on default
 				readonly color_status='\033[97;100m'  # white on dark gray
 				;;
 		esac
 	fi
 
-	printf "${color_testcase-}%s\t${color_status-}%s${color_normal-}\n" "$testcase" "$status"
+	printf "${color_status-}%s\t${color_testcase-}%s${color_normal-}\n"  "$status" "$testcase"
 
 	return 0
 )
@@ -56,8 +56,8 @@ unittest__print_debug() (
 
 	if [ "$UT_COLOR_OUTPUT" = 'on' ] || { [ -t 2 ] && [ "$UT_COLOR_OUTPUT" = 'auto' ]; }; then
 		readonly color_normal='\033[0m'
-		readonly color_header='\033[34m'  # blue
-		readonly color_quote='\033[37m'  # gray
+		readonly color_header='\033[0;34m'  # blue on default
+		readonly color_quote='\033[0;37m'  # gray on default
 	fi
 
 	printf "\n${color_header-}-- %s${color_normal-}\n\n" "$header" >&2

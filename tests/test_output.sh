@@ -46,13 +46,13 @@ afterAll() {
 test_status_pass() {
 	result=$(./unittest "$TESTCASE_SUCCESS")
 
-	test $? -eq 0 && test "${result}" = "${TESTCASE_SUCCESS}:test_true	PASS"
+	test $? -eq 0 && test "${result}" = "PASS	${TESTCASE_SUCCESS}:test_true"
 }
 
 test_status_pass_nocolor() {
 	result=$(NO_COLOR=1 ./unittest "$TESTCASE_SUCCESS")
 
-	test $? -eq 0 && test "${result}" = "${TESTCASE_SUCCESS}:test_true	PASS"
+	test $? -eq 0 && test "${result}" = "PASS	${TESTCASE_SUCCESS}:test_true"
 }
 
 test_status_pass_color_force_set() {
@@ -70,13 +70,13 @@ test_status_pass_color_force_unset() {
 test_status_fail() {
 	result=$(./unittest "$TESTCASE_FAILURE")
 
-	test $? -eq 1 && test "${result}" = "${TESTCASE_FAILURE}:test_false	FAIL"
+	test $? -eq 1 && test "${result}" = "FAIL	${TESTCASE_FAILURE}:test_false"
 }
 
 test_status_fail_nocolor() {
 	result=$(NO_COLOR=1 ./unittest "$TESTCASE_FAILURE")
 
-	test $? -eq 1 && test "${result}" = "${TESTCASE_FAILURE}:test_false	FAIL"
+	test $? -eq 1 && test "${result}" = "FAIL	${TESTCASE_FAILURE}:test_false"
 }
 
 test_status_fail_color_force_set() {
@@ -94,13 +94,13 @@ test_status_fail_color_force_unset() {
 test_status_skip() {
 	result=$(./unittest "$TESTCASE_SKIPPED")
 
-	test $? -eq 0 && test "${result}" = "${TESTCASE_SKIPPED}:xtest_skipped	SKIP"
+	test $? -eq 0 && test "${result}" = "SKIP	${TESTCASE_SKIPPED}:xtest_skipped"
 }
 
 test_status_skip_nocolor() {
 	result=$(NO_COLOR=1 ./unittest "$TESTCASE_SKIPPED")
 
-	test $? -eq 0 && test "${result}" = "${TESTCASE_SKIPPED}:xtest_skipped	SKIP"
+	test $? -eq 0 && test "${result}" = "SKIP	${TESTCASE_SKIPPED}:xtest_skipped"
 }
 
 test_status_skip_color_force_set() {

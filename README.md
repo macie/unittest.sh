@@ -20,12 +20,12 @@ With a basic call, it searches inside `tests/` directory for `test_*.sh` files w
 
 ```bash
 $ unittest
-tests/test_asserts.sh:test_assertEqual_equal_ints	PASS
-tests/test_asserts.sh:test_assertEqual_unequal_ints	PASS
+PASS	tests/test_usage.sh:test_invalid_params_msg
+PASS	tests/test_regression.sh:test_issue8
 ...
 ```
 
-The result is reported to stdout. Non-zero exit code indicates, that some tests have failed. To be passed,
+The result is reported to stdout. Non-zero exit code indicates, that some tests have failed. To pass,
 each test should exit with 0 code.
 
 In addition to `test_*` functions, you can also define functions named:
@@ -40,7 +40,7 @@ command with a readable error report (to stderr):
 ```bash
 $ unittest
 ...
-tests/test_number_assertions.sh:test_lessequal_mixed2	PASS
+PASS	tests/test_number_assertions.sh:test_lessequal_mixed2
 
 -- FAILED TEST [tests/test_output.sh:test_status_pass]
 
@@ -50,8 +50,8 @@ I expected:
 
 to be true, but the result was false.
 
-tests/test_output.sh:test_status_pass	FAIL
-tests/test_output.sh:test_status_fail	PASS
+FAIL	tests/test_output.sh:test_status_pass
+PASS	tests/test_output.sh:test_status_fail
 ...
 ```
 
