@@ -11,65 +11,65 @@
 #
 
 unittest__print_result() {
-    # Write test status message to stdout
-    # $1 - test location
-    # $2 - test status
-    # prefix: utt9t_
-    utt9t_color_default=''
-    utt9t_color_location=''
-    utt9t_color_status=''
+	# Write test status message to stdout
+	# $1 - test location
+	# $2 - test status
+	# prefix: utt9t_
+	utt9t_color_default=''
+	utt9t_color_location=''
+	utt9t_color_status=''
 
-    if { [ -n "${CLICOLOR_FORCE}" ] && [ "${CLICOLOR_FORCE}" -ne 0 ]; } || { [ -t 1 ] && [ -z "${NO_COLOR}" ]; }; then  # stdout is interactive terminal
-        utt9t_color_default='\033[0m'
-        case $2 in
-            PASS)  # location: default; status: green
-                utt9t_color_location='\033[0m'
-                utt9t_color_status='\033[32m'
-                ;;
-            FAIL)  # location: red; status: white on red
-                utt9t_color_location='\033[31m'
-                utt9t_color_status='\033[97;41m'
-                ;;
-            SKIP)  # location: gray; status: gray
-                utt9t_color_location='\033[37m'
-                utt9t_color_status='\033[37m'
-                ;;
-        esac
-    fi
+	if { [ -n "${CLICOLOR_FORCE}" ] && [ "${CLICOLOR_FORCE}" -ne 0 ]; } || { [ -t 1 ] && [ -z "${NO_COLOR}" ]; }; then  # stdout is interactive terminal
+		utt9t_color_default='\033[0m'
+		case $2 in
+			PASS)  # location: default; status: green
+				utt9t_color_location='\033[0m'
+				utt9t_color_status='\033[32m'
+				;;
+			FAIL)  # location: red; status: white on red
+				utt9t_color_location='\033[31m'
+				utt9t_color_status='\033[97;41m'
+				;;
+			SKIP)  # location: gray; status: gray
+				utt9t_color_location='\033[37m'
+				utt9t_color_status='\033[37m'
+				;;
+		esac
+	fi
 
-    printf "${utt9t_color_location}%s\t${utt9t_color_status}%s${utt9t_color_default}\n" "$1" "$2"
+	printf "${utt9t_color_location}%s\t${utt9t_color_status}%s${utt9t_color_default}\n" "$1" "$2"
 
-    unset -v utt9t_color_default utt9t_color_location utt9t_color_status
-    return 0
+	unset -v utt9t_color_default utt9t_color_location utt9t_color_status
+	return 0
 }
 
 unittest__print_debug() {
-    # $1 - category
-    # $2-... - paragraphs
-    # prefix: utt13o_
-    utt13o_color=''
-    utt13o_color_default=''
+	# $1 - category
+	# $2-... - paragraphs
+	# prefix: utt13o_
+	utt13o_color=''
+	utt13o_color_default=''
 
-    if { [ -n "${CLICOLOR_FORCE}" ] && [ "${CLICOLOR_FORCE}" -ne 0 ]; } || { [ -t 2 ] && [ -z "${NO_COLOR}" ]; }; then  # stderr is interactive terminal
-        utt13o_color='\033[34m'  # blue
-        utt13o_color_default='\033[0m'
-        utt13o_color_quote='\033[37m'  # gray
-    fi
+	if { [ -n "${CLICOLOR_FORCE}" ] && [ "${CLICOLOR_FORCE}" -ne 0 ]; } || { [ -t 2 ] && [ -z "${NO_COLOR}" ]; }; then  # stderr is interactive terminal
+		utt13o_color='\033[34m'  # blue
+		utt13o_color_default='\033[0m'
+		utt13o_color_quote='\033[37m'  # gray
+	fi
 
-    printf "\n${utt13o_color}-- %s${utt13o_color_default}\n\n" "$1" >&2
+	printf "\n${utt13o_color}-- %s${utt13o_color_default}\n\n" "$1" >&2
 
-    shift 1
-    for utt13o_paragraph in "$@"; do
-        # shellcheck disable=SC2059
-        case ${utt13o_paragraph} in
-            ' '*) printf "${utt13o_color_quote}" >&2 ;;
-            *)  ;;
-        esac
-        printf "%s${utt13o_color_default}\n\n" "${utt13o_paragraph}" >&2
-    done
+	shift 1
+	for utt13o_paragraph in "$@"; do
+		# shellcheck disable=SC2059
+		case ${utt13o_paragraph} in
+			' '*) printf "${utt13o_color_quote}" >&2 ;;
+			*)  ;;
+		esac
+		printf "%s${utt13o_color_default}\n\n" "${utt13o_paragraph}" >&2
+	done
 
-    unset -v utt13o_paragraph utt13o_color utt13o_color_default
-    return 0
+	unset -v utt13o_paragraph utt13o_color utt13o_color_default
+	return 0
 }
 
 #
@@ -78,30 +78,30 @@ unittest__print_debug() {
 
 # shellcheck disable=SC2317
 test() {
-    # same arguments as command test(1)
-    UT4e1_test_error_msg=$(/bin/test "$@" 2>&1)
-    case $? in
-        0)  ;;
-        1)
-            unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
-                'I expected:' \
-                "    test$(printf " '%s'" "$@")" \
-                'to be true, but the result was false.'
-            return 1
-            ;;
-        *)
-            unittest__print_debug "INVALID ASSERTION [${UNITTEST_CURRENT}]" \
-                'I tried to check' \
-                "    test$(printf " '%s'" "$@")" \
-                'but I got error with message:' \
-                "    ${UT4e1_test_error_msg}" \
-                'Did you use proper operator?' \
-                "Hint: Some operators requires specific type of values. Read 'man test' to learn more."
-            return 1
-            ;;
-    esac
+	# same arguments as command test(1)
+	UT4e1_test_error_msg=$(/bin/test "$@" 2>&1)
+	case $? in
+		0)  ;;
+		1)
+			unittest__print_debug "FAILED TEST [${UNITTEST_CURRENT}]" \
+				'I expected:' \
+				"    test$(printf " '%s'" "$@")" \
+				'to be true, but the result was false.'
+			return 1
+			;;
+		*)
+			unittest__print_debug "INVALID ASSERTION [${UNITTEST_CURRENT}]" \
+				'I tried to check' \
+				"    test$(printf " '%s'" "$@")" \
+				'but I got error with message:' \
+				"    ${UT4e1_test_error_msg}" \
+				'Did you use proper operator?' \
+				"Hint: Some operators requires specific type of values. Read 'man test' to learn more."
+			return 1
+			;;
+	esac
 
-    return 0
+	return 0
 }
 
 
@@ -133,27 +133,27 @@ test() {
 #     Calling it inside pipeline without '-' will disregards standard input and
 #     use defaults instead.
 unittest__test_files() {
-    {
-        if [ "$1" = '-' ]; then
-            cat -
-        else
-            printf '%s\n' "$@"
-        fi
-     } |
-     while read -r unittest_dir; do
-         if ! find "${unittest_dir:-./}" -path "*${unittest_dir:-tests/}*" -name 'test_*.sh' 2>/dev/null; then
-             unittest__print_debug 'TESTS NOT FOUND' \
-                 "I was looking for 'test_*.sh' files inside '${unittest_dir:-tests/}' directory using:" \
-                 "    $ find \"${unittest_dir:-./}\" -path \"*${unittest_dir:-tests/}*\" -name 'test_*.sh' -print" \
-                 'but instead of files I got an error with message:' \
-                 "    $(find "${unittest_dir:-./}" -path "*${unittest_dir:-tests/}*" -name 'test_*.sh' -print 2>&1)"
-             unset -v unittest_dir
-             return 1
-         fi
-         unset -v unittest_dir
-     done
+	{
+		if [ "$1" = '-' ]; then
+			cat -
+		else
+			printf '%s\n' "$@"
+		fi
+	 } |
+	 while read -r unittest_dir; do
+		 if ! find "${unittest_dir:-./}" -path "*${unittest_dir:-tests/}*" -name 'test_*.sh' 2>/dev/null; then
+			 unittest__print_debug 'TESTS NOT FOUND' \
+				 "I was looking for 'test_*.sh' files inside '${unittest_dir:-tests/}' directory using:" \
+				 "    $ find \"${unittest_dir:-./}\" -path \"*${unittest_dir:-tests/}*\" -name 'test_*.sh' -print" \
+				 'but instead of files I got an error with message:' \
+				 "    $(find "${unittest_dir:-./}" -path "*${unittest_dir:-tests/}*" -name 'test_*.sh' -print 2>&1)"
+			 unset -v unittest_dir
+			 return 1
+		 fi
+		 unset -v unittest_dir
+	 done
 
-     return $?
+	 return $?
 }
 
 ##
@@ -166,48 +166,48 @@ unittest__test_files() {
 #    >0 - Some tests failed.
 ##
 unittest__run() {
-    # prefix: utt8r_
+	# prefix: utt8r_
 
-    UNITTEST_STATUS=0
-    while read -r utt8r_testfile; do
-        (
-            utt8r_beforeAll=$(sed -n 's/^[ \t]*\(beforeAll\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
-            utt8r_afterAll=$(sed -n 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
-            utt8r_beforeEach=$(sed -n -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
-            utt8r_afterEach=$(sed -n -e 's/^[ \t]*\(afterEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(tearDown\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
-            utt8r_tests=$(sed -n 's/^[ \t]*\(x\{0,1\}test_[^(=]*\)(.*/\1/p' "${utt8r_testfile}")
+	UNITTEST_STATUS=0
+	while read -r utt8r_testfile; do
+		(
+			utt8r_beforeAll=$(sed -n 's/^[ \t]*\(beforeAll\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
+			utt8r_afterAll=$(sed -n 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
+			utt8r_beforeEach=$(sed -n -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
+			utt8r_afterEach=$(sed -n -e 's/^[ \t]*\(afterEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(tearDown\)[ \t]*(.*/\1/p' "${utt8r_testfile}")
+			utt8r_tests=$(sed -n 's/^[ \t]*\(x\{0,1\}test_[^(=]*\)(.*/\1/p' "${utt8r_testfile}")
 
 			# shellcheck source=/dev/null
-            . "${utt8r_testfile}"
-            ${utt8r_beforeAll}
-            for _current_testcase in ${utt8r_tests}; do
-                UNITTEST_CURRENT="${utt8r_testfile#./}:${_current_testcase}"
+			. "${utt8r_testfile}"
+			${utt8r_beforeAll}
+			for _current_testcase in ${utt8r_tests}; do
+				UNITTEST_CURRENT="${utt8r_testfile#./}:${_current_testcase}"
 
-                case ${_current_testcase} in
-                    x*)
-                        unittest__print_result "${UNITTEST_CURRENT}" 'SKIP'
-                        ;;
-                    *)
-                        ${utt8r_beforeEach}
-                        # test result is status of last command in test
-                        if ${_current_testcase}; then
-                            unittest__print_result "${UNITTEST_CURRENT}" 'PASS'
-                        else
-                            # last command in test failed
-                            UNITTEST_STATUS=1
-                            unittest__print_result "${UNITTEST_CURRENT}" 'FAIL'
-                        fi
-                        ${utt8r_afterEach}
-                        ;;
-                esac
-            done
-            ${utt8r_afterAll}
-            unset -v UNITTEST_CURRENT
-            exit ${UNITTEST_STATUS}
-        )
-        UNITTEST_STATUS=$?
-    done
-    return ${UNITTEST_STATUS}
+				case ${_current_testcase} in
+					x*)
+						unittest__print_result "${UNITTEST_CURRENT}" 'SKIP'
+						;;
+					*)
+						${utt8r_beforeEach}
+						# test result is status of last command in test
+						if ${_current_testcase}; then
+							unittest__print_result "${UNITTEST_CURRENT}" 'PASS'
+						else
+							# last command in test failed
+							UNITTEST_STATUS=1
+							unittest__print_result "${UNITTEST_CURRENT}" 'FAIL'
+						fi
+						${utt8r_afterEach}
+						;;
+				esac
+			done
+			${utt8r_afterAll}
+			unset -v UNITTEST_CURRENT
+			exit ${UNITTEST_STATUS}
+		)
+		UNITTEST_STATUS=$?
+	done
+	return ${UNITTEST_STATUS}
 }
 
 
@@ -216,22 +216,22 @@ unittest__run() {
 #
 
 {
-    # Color output by default: on supported terminals when NO_COLOR is not set.
-    # Supported terminals are recognized based on TERM variable. When TERM is
-    # not set (for example inside CI environment) we assume that terminal is dumb.
-    if [ -z "${NO_COLOR}" ] && [ "$(TERM=${TERM:-dumb} tput colors)" -lt 8 ]; then
-        NO_COLOR='YES'
-    fi
+	# Color output by default: on supported terminals when NO_COLOR is not set.
+	# Supported terminals are recognized based on TERM variable. When TERM is
+	# not set (for example inside CI environment) we assume that terminal is dumb.
+	if [ -z "${NO_COLOR}" ] && [ "$(TERM=${TERM:-dumb} tput colors)" -lt 8 ]; then
+		NO_COLOR='YES'
+	fi
 
-    case $# in
-        0)  # discovery mode
-            unittest__test_files | unittest__run
-            exit $?
-            ;;
-        1)
-            case $1 in
-                -h|--help)
-                    cat >&2 <<-'EOF'
+	case $# in
+		0)  # discovery mode
+			unittest__test_files | unittest__run
+			exit $?
+			;;
+		1)
+			case $1 in
+				-h|--help)
+					cat >&2 <<-'EOF'
 						unittest - unit tests framework for shell scripts.
 
 						Usage:
@@ -243,28 +243,28 @@ unittest__run() {
 
 						Without any arguments it will run all tests from 'tests' directory.
 						EOF
-                    exit 0
-                    ;;
+					exit 0
+					;;
 
-                -v|--version)
-                    printf 'unittest 23.11\n' >&2
-                    exit 0
-                    ;;
-                *)  # specified directory/file
-                    if [ -d "$1" ]; then
-                        unittest__test_files "$1" | unittest__run
-                        exit $?
-                    elif [ -f "$1" ]; then
-                        printf '%s\n' "$1" | unittest__run
-                        exit $?
-                    fi
-                    ;;
-            esac
-    esac
+				-v|--version)
+					printf 'unittest 23.11\n' >&2
+					exit 0
+					;;
+				*)  # specified directory/file
+					if [ -d "$1" ]; then
+						unittest__test_files "$1" | unittest__run
+						exit $?
+					elif [ -f "$1" ]; then
+						printf '%s\n' "$1" | unittest__run
+						exit $?
+					fi
+					;;
+			esac
+	esac
 
-    unittest__print_debug 'INVALID USAGE' \
-        "I cannot understand '$*' option. Did you want to use option or did you misspell file/directory?" \
-        'Hint: Find valid usage with:' \
-        '    $ unittest -h'
-    exit 64  # EX_USAGE
+	unittest__print_debug 'INVALID USAGE' \
+		"I cannot understand '$*' option. Did you want to use option or did you misspell file/directory?" \
+		'Hint: Find valid usage with:' \
+		'    $ unittest -h'
+	exit 64  # EX_USAGE
 }
