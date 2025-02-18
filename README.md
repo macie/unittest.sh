@@ -65,14 +65,28 @@ For example, tests see files inside the [tests directory](./tests).
 1. Download [latest stable release from GitHub](https://github.com/macie/unittest.sh/releases/latest):
 
     ```bash
-    wget https://github.com/macie/unittest.sh/releases/latest/download/unittest
+    curl -SLO https://github.com/macie/unittest.sh/releases/latest/download/unittest
     ```
 
-2. (OPTIONAL) Verify downloading:
+2. (OPTIONAL) Verify downloading with:
+
+    - [sha256sum](https://en.wikipedia.org/wiki/Sha1sum) - for integrity check
+    - [signify](https://en.wikipedia.org/wiki/Signify_(OpenBSD)) - for authorship verification
+    - [openssl](https://en.wikipedia.org/wiki/OpenSSL) - for secure timestamp verification
 
     ```bash
-    wget https://github.com/macie/unittest.sh/releases/latest/download/unittest.sha256sum
-    sha256sum -c unittest.sha256sum
+    curl -sSLO 'https://github.com/macie/unittest.sh/releases/latest/download/unittest.sha256sum{.sig,.sig.tsr}'
+
+    # Verify integrity
+    tail -n 1 unittest.sha256sum.sig | sha256sum --check
+
+    # Verify authorship
+    printf 'untrusted comment: unittest release key\nRWSjEUoB1VL59SwTiImjz+RkrG6rA0w9+j5VsG2GZIPRwpGlE+9CjA6C\n' >unittest-release_key.pub
+    signify -V -e -p unittest-release_key.pub -x unittest.sha256sum.sig -m '/dev/null'
+
+    # Verify timestamp
+    curl -sSLO 'https://www.certum.pl/CTNCA.pem'
+    openssl ts -reply -text -in unittest.sha256sum.sig.tsr 2>/dev/null | grep -e 'Time stamp' -e 'TSA'
     ```
 
 3. Set execute permission:
@@ -104,13 +118,31 @@ Use `make` (GNU or BSD):
 - `make check` - perform static code analysis
 - `make install` - install in `/usr/local/bin`
 - `make dist` - prepare for distributing
+- `make dist-verify` - verify distributed artifacts
 - `make clean` - remove distributed artifacts
 - `make release` - tag latest commit as a new release
+- `make release-key` - generate new key for release signing
 - `make info` - print system info (useful for debugging).
 
 ### Versioning
 
 _unittest_ is versioned according to the scheme `YY.0M.MICRO` ([calendar versioning](https://calver.org/)). Releases are tagged in Git.
+
+### Reproducible builds
+
+```bash
+VERSION=25.02
+
+# Download and build release
+git clone --depth 1 --branch "v$VERSION" 'https://github.com/macie/unittest.sh.git'
+cd unittest.sh
+make dist
+
+# Validate build against remote hash
+cd ./dist
+curl -sSL -o 'remote.sha256sum.sig' "https://github.com/macie/unittest.sh/releases/download/v${VERSION}/unittest.sha256sum.sig"
+tail -n 1 unittest.sha256sum.sig | sha256sum --check
+```
 
 ## Alternatives
 

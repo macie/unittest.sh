@@ -19,16 +19,35 @@ jobs:
         with:
           egress-policy: block
           allowed-endpoints: >
+            git.io:443
             github.com:443
             raw.githubusercontent.com:443
+            packages.microsoft.com:443
+            azure.archive.ubuntu.com:80
+            motd.ubuntu.com:443
+            esm.ubuntu.com:443
+            time.certum.pl:80
+            www.certum.pl:443
 
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
+      - name: Setup OS
+        uses: awalsh128/cache-apt-pkgs-action@5902b33ae29014e6ca012c5d8025d4346556bd40 # v1.4.3
+        with:
+          packages: signify-openbsd
+
       - name: Run checks
         run: make
 
-      - run: make dist
+      - name: Create and sign artifacts
+        env:
+          RELEASE_PRIV_KEY: ${{ secrets.RELEASE_PRIV_KEY }}
+        run: |
+          printf 'untrusted comment: release key\n%s\n' "$RELEASE_PRIV_KEY" >unittest-release_key.sec && make dist
+
+      - name: Validate artifacts
+        run: make dist-verify
 
       - name: Save build artifacts
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
