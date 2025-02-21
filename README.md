@@ -1,6 +1,8 @@
 # unittest
 
 [![Quality check status](https://github.com/macie/unittest.sh/actions/workflows/check.yml/badge.svg)](https://github.com/macie/unittest.sh/actions/workflows/check.yml)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7005/badge)](https://www.bestpractices.dev/projects/7005)
+[![License](https://img.shields.io/github/license/macie/unittest.sh)](https://tldrlegal.com/license/mit-license)
 
 _Unittest is the standard test runner._
 
