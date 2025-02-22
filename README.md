@@ -6,6 +6,8 @@
 
 _Unittest is the standard test runner._
 
+<img alt="unittest showcase" src="./examples/unittest.gif" width="870" />
+
 It follows the Unix philosophy with a modern touch, so it is:
 
 - easy to use: readable elm-inspired error messages & colourized output (if applicable)

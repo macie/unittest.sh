@@ -4,6 +4,7 @@
 *
 
 # Allow CI configs
+!/.gitattributes
 !/.gitignore
 !/Makefile
 !/.github/workflows/*.yml
@@ -11,6 +12,9 @@
 # Allow source code...
 !/unittest
 !*.sh
+
+!examples/*.tape
+!examples/*.gif
 
 !README.md
 !LICENSE
