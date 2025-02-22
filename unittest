@@ -7,7 +7,7 @@
 set -u
 
 readonly UT_VERSION='local-dev'
-UT_EXECUTED_TESTCASE=
+UT_CURRENT_LOCATION=''
 UT_COLOR_OUTPUT='auto'  # 'auto' | 'on' | 'off'
 
 
@@ -50,7 +50,9 @@ unittest__print_result() (
 
 # Write debug message to stderr in color: when forced or on capable
 # interactive terminal (using UT_COLOR_OUTPUT global variable).
+# Uses UT_CURRENT_LOCATION global variable for test location.
 unittest__print_debug() (
+	readonly location="${UT_CURRENT_LOCATION##*/}"
 	readonly header="${1:-'UNKNOWN ERROR'}"
 	shift 1  # $@ - paragraphs
 
@@ -60,7 +62,9 @@ unittest__print_debug() (
 		readonly color_quote='\033[0;37m'  # gray on default
 	fi
 
-	printf "\n${color_header-}-- %s${color_normal-}\n\n" "$header" >&2
+	# align header line to the 80 chars width. Header is usually not longer than 15 chars
+	printf "\n${color_header-}%-20s%60s${color_normal-}\n\n" "-- ${header} -" "- ${location:--}" |
+		sed -e 's/  /--/g' -e 's/- -/---/g' >&2
 
 	for paragraph in "$@"; do
 		# shellcheck disable=SC2059 # '%b' is not portable yet
@@ -79,22 +83,20 @@ unittest__print_debug() (
 #
 
 # Drop-in replacement for test(1) command with user-friendly error messages.
-# It prints corresponding test location from UT_EXECUTED_TESTCASE global
-# variable (if available).
 # shellcheck disable=SC2317  # it shadows test command called inside test files
 test() (
 	error_msg=$(/bin/test "$@" 2>&1)
 	case $? in
 		0)  ;;
 		1)
-			unittest__print_debug "FAILED TEST${UT_EXECUTED_TESTCASE:+ [${UT_EXECUTED_TESTCASE}]}" \
+			unittest__print_debug 'FAILED TEST' \
 				'I expected:' \
 				"    test$(printf " '%s'" "$@")" \
 				'to be true, but the result was false.'
 			return 1
 			;;
 		*)
-			unittest__print_debug "INVALID ASSERTION${UT_EXECUTED_TESTCASE:+ [${UT_EXECUTED_TESTCASE}]}" \
+			unittest__print_debug 'WRONG ASSERTION' \
 				'I tried to check' \
 				"    test$(printf " '%s'" "$@")" \
 				'but I got error with message:' \
@@ -171,6 +173,8 @@ unittest__run() {
 	ut_exit_code=0
 	while read -r ut_testfile; do
 		(
+			UT_CURRENT_LOCATION="${ut_testfile#./}"
+
 			ut_before_all=$(sed -n 's/^[ \t]*\(beforeAll\)[ \t]*(.*/\1/p' "${ut_testfile}")
 			ut_after_all=$(sed -n 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' "${ut_testfile}")
 			ut_before_each=$(sed -n -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' "${ut_testfile}")
@@ -181,21 +185,21 @@ unittest__run() {
 			. "${ut_testfile}"
 			${ut_before_all}
 			for ut_testcase in ${ut_testfunctions}; do
-				UT_EXECUTED_TESTCASE="${ut_testfile#./}:${ut_testcase}"
+				UT_CURRENT_LOCATION="${ut_testfile#./}:${ut_testcase}"
 
 				case ${ut_testcase} in
 					x*)
-						unittest__print_result "${UT_EXECUTED_TESTCASE}" 'SKIP'
+						unittest__print_result "${UT_CURRENT_LOCATION}" 'SKIP'
 						;;
 					*)
 						${ut_before_each}
 						# test result is status of last command in test
 						if ${ut_testcase}; then
-							unittest__print_result "${UT_EXECUTED_TESTCASE}" 'PASS'
+							unittest__print_result "${UT_CURRENT_LOCATION}" 'PASS'
 						else
 							# last command in test failed
 							ut_exit_code=1
-							unittest__print_result "${UT_EXECUTED_TESTCASE}" 'FAIL'
+							unittest__print_result "${UT_CURRENT_LOCATION}" 'FAIL'
 						fi
 						${ut_after_each}
 						;;
@@ -203,7 +207,7 @@ unittest__run() {
 			done
 			${ut_after_all}
 
-			unset -v UT_EXECUTED_TESTCASE ut_testfile ut_before_all ut_after_all ut_before_each ut_after_each ut_testfunctions ut_testcase
+			unset -v UT_CURRENT_LOCATION ut_testfile ut_before_all ut_after_all ut_before_each ut_after_each ut_testfunctions ut_testcase
 			exit ${ut_exit_code}
 		)
 		ut_exit_code=$?

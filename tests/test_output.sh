@@ -132,7 +132,7 @@ test_status_unknown_color_auto() {
 #
 
 test_debug() {
-	expected="-- FAILED TEST [${TESTCASE_TEST_FAILURE}:test_failure]"
+	expected='-- FAILED TEST ------------------------------- test_test_failure.sh:test_failure'
 
 	result=$(./unittest "$TESTCASE_TEST_FAILURE" 2>&1 | grep 'FAILED TEST')
 

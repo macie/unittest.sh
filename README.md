@@ -44,7 +44,7 @@ $ unittest
 ...
 PASS	tests/test_number_assertions.sh:test_lessequal_mixed2
 
--- FAILED TEST [tests/test_output.sh:test_status_pass]
+-- FAILED TEST --------------------------------- test_output.sh:test_status_pass
 
 I expected:
 
