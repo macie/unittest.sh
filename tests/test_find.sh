@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 # shellcheck disable=SC2317
-beforeAll() {
+before_all() {
 	 find() {  # find mock
 		  case "$1" in
 				'error')  echo "find mock returned error" >&2; return 1 ;;
@@ -12,7 +12,7 @@ beforeAll() {
 	 }
 }
 
-afterAll() {
+after_all() {
 	 unset -f find
 }
 

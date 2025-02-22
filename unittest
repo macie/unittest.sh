@@ -190,10 +190,60 @@ unittest__run() {
 		(
 			UT_CURRENT_LOCATION="${ut_testfile#./}"
 
-			ut_before_all=$(sed -n 's/^[ \t]*\(beforeAll\)[ \t]*(.*/\1/p' "${ut_testfile}")
-			ut_after_all=$(sed -n 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' "${ut_testfile}")
-			ut_before_each=$(sed -n -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' "${ut_testfile}")
-			ut_after_each=$(sed -n -e 's/^[ \t]*\(afterEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(tearDown\)[ \t]*(.*/\1/p' "${ut_testfile}")
+			ut_before_all=$(sed -n -e 's/^[ \t]*\(before_all\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(beforeAll\)[ \t]*(.*/\1/p' "${ut_testfile}")
+			case "$ut_before_all" in
+				*beforeAll*)
+					unittest__print_debug 'DEPRECATED' \
+						'Function:' \
+						'    beforeAll()' \
+						'is deprecated and will be unsupported in the future versions.' \
+						"Hint: Rename it to 'before_all'."
+					;;
+			esac
+			ut_after_all=$(sed -n -e 's/^[ \t]*\(after_all\)[ \t]*(.*/\1/p'  -e 's/^[ \t]*\(afterAll\)[ \t]*(.*/\1/p' "${ut_testfile}")
+			case "$ut_after_all" in
+				*afterAll*)
+						unittest__print_debug 'DEPRECATED' \
+						'Function:' \
+						'    afterAll()' \
+						'is deprecated and will be unsupported in the future versions.' \
+						"Hint: Rename it to 'after_all'."
+					;;
+			esac
+			ut_before_each=$(sed -n -e 's/^[ \t]*\(before_each\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(beforeEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(setUp\)[ \t]*(.*/\1/p' "${ut_testfile}")
+			case "$ut_before_each" in
+				*beforeEach*)
+					unittest__print_debug 'DEPRECATED' \
+						'Function:' \
+						'    beforeEach()' \
+						'is deprecated and will be unsupported in the future versions.' \
+						"Hint: Rename it to 'before_each'."
+					;;
+				*setUp*)
+					unittest__print_debug 'DEPRECATED' \
+						'Function:' \
+						'    setUp()' \
+						'is deprecated and will be unsupported in the future versions.' \
+						"Hint: Rename it to 'before_each'."
+					;;
+			esac
+			ut_after_each=$(sed -n -e 's/^[ \t]*\(after_each\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(afterEach\)[ \t]*(.*/\1/p' -e 's/^[ \t]*\(tearDown\)[ \t]*(.*/\1/p' "${ut_testfile}")
+			case "$ut_after_each" in
+				*afterEach*)
+					unittest__print_debug 'DEPRECATED' \
+						'Function:' \
+						'    afterEach()' \
+						'is deprecated and will be unsupported in the future versions.' \
+						"Hint: Rename it to 'after_each'."
+					;;
+				*tearDown*)
+					unittest__print_debug 'DEPRECATED' \
+						'Function:' \
+						'    tearDown()' \
+						'is deprecated and will be unsupported in the future versions.' \
+						"Hint: Rename it to 'after_each'."
+					;;
+			esac
 			ut_testfunctions=$(awk '/^[^{]*}/ { nesting-- } /^[ \t]*x{0,1}test_[^(=]*\(.*/ { if (nesting == 0) { print $1 } } /{[^}]*$/ { nesting++ }' "${ut_testfile}" | tr -d '(){}')
 
 			# shellcheck source=/dev/null

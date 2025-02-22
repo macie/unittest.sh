@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2014 Maciej Żok <https://github.com/macie/unittest.sh>
 # SPDX-License-Identifier: MIT
 
-beforeAll() {
+before_all() {
 	FIXTURES=$(mktemp -d -t 'unittest_testXXXXXX')
 
 	TESTCASE_SUCCESS="${FIXTURES}/test_success.sh"
@@ -31,11 +31,11 @@ beforeAll() {
 	EOF
 }
 
-beforeEach() {
+before_each() {
 	unset NO_COLOR CLICOLOR_FORCE
 }
 
-afterAll() {
+after_all() {
 	rm -rf "${FIXTURES}"
 }
 

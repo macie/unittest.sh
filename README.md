@@ -35,8 +35,8 @@ each test should exit with 0 code.
 In addition to `test_*` functions, you can also define functions named:
 
 - `xtest_*` - will be reported as SKIP (without error)
-- `beforeEach` and `afterEach` - test preparation/cleanup code executed before/after each test function
-- `beforeAll` and `afterAll` - test preparation/cleanup code executed once per file, before/after all test functions.
+- `before_each` and `after_each` - test preparation/cleanup code executed before/after each test function
+- `before_all` and `after_all` - test preparation/cleanup code executed once per file, before/after all test functions.
 
 Tests can call the `test` function, which extends the [test](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/test.html)
 command with a readable error report (to stderr):

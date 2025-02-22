@@ -2,11 +2,11 @@
 # SPDX-FileCopyrightText: 2014 Maciej Żok <https://github.com/macie/unittest.sh>
 # SPDX-License-Identifier: MIT
 
-beforeEach() {
+before_each() {
 	FIXTURES=$(mktemp -d -t 'unittest_testXXXXXX')
 }
 
-afterEach() {
+after_each() {
 	rm -rf "${FIXTURES}"
 }
 
