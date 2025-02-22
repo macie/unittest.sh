@@ -54,3 +54,17 @@ test_issue13() {
 
 	test -z "${result}"
 }
+
+test_issue16() {
+	cat <<-'EOF' >"${FIXTURES}/test_err_msg_format.sh"
+	#!/bin/sh
+
+	test_false() {
+		test 0 -eq a
+	}
+	EOF
+
+	result=$(./unittest "${FIXTURES}"/test_err_msg_format.sh 2>&1 | grep "0 -eq 'a'")
+
+	test "$?" -eq 0
+}

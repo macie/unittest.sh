@@ -48,7 +48,7 @@ PASS	tests/test_number_assertions.sh:test_lessequal_mixed2
 
 I expected:
 
-    test '0' '-eq' '10'
+    test 0 -eq 10
 
 to be true, but the result was false.
 

@@ -85,24 +85,39 @@ unittest__print_debug() (
 # Drop-in replacement for test(1) command with user-friendly error messages.
 # shellcheck disable=SC2317  # it shadows test command called inside test files
 test() (
+    test_args='test'
+    for arg in "$@"; do
+        case "${arg}" in
+            !|-*|=|!=|\<|\>)
+                test_args="${test_args} ${arg}"
+                ;;
+            [0-9]|[0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])
+                test_args="${test_args} ${arg}"
+                ;;
+            *)
+                test_args="${test_args} '${arg}'"
+                ;;
+        esac
+    done
+
 	error_msg=$(/bin/test "$@" 2>&1)
 	case $? in
 		0)  ;;
 		1)
 			unittest__print_debug 'FAILED TEST' \
 				'I expected:' \
-				"    test$(printf " '%s'" "$@")" \
+                "    ${test_args}" \
 				'to be true, but the result was false.'
 			return 1
 			;;
 		*)
 			unittest__print_debug 'WRONG ASSERTION' \
-				'I tried to check' \
-				"    test$(printf " '%s'" "$@")" \
+				'I tried to check:' \
+                "    ${test_args}" \
 				'but I got error with message:' \
 				"    ${error_msg}" \
 				'Did you use proper operator?' \
-				"Hint: Some operators requires specific type of values. Read 'man test' to learn more."
+				"Hint: Some operators requires specific type of values. See: 'man test'."
 			return 1
 			;;
 	esac
