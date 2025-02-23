@@ -86,10 +86,11 @@ For example, tests see files inside the [tests directory](./tests).
 
     # Verify authorship
     printf 'untrusted comment: unittest release key\nRWSjEUoB1VL59SwTiImjz+RkrG6rA0w9+j5VsG2GZIPRwpGlE+9CjA6C\n' >unittest-release_key.pub
-    signify -V -e -p unittest-release_key.pub -x unittest.sha256sum.sig -m '/dev/null'
+    signify -V -e -p unittest-release_key.pub -x unittest.sha256sum.sig -m /dev/null
 
     # Verify timestamp
     curl -sSLO 'https://www.certum.pl/CTNCA.pem'
+    openssl ts -verify -in unittest.sha256sum.sig.tsr -data unittest.sha256sum.sig -CAfile CTNCA.pem 2>/dev/null
     openssl ts -reply -text -in unittest.sha256sum.sig.tsr 2>/dev/null | grep -e 'Time stamp' -e 'TSA'
     ```
 
@@ -141,12 +142,12 @@ VERSION=25.02
 # Download and build release
 git clone --depth 1 --branch "v$VERSION" 'https://github.com/macie/unittest.sh.git'
 cd unittest.sh
-make dist
+make build
 
 # Validate build against remote hash
 cd ./dist
 curl -sSL -o 'remote.sha256sum.sig' "https://github.com/macie/unittest.sh/releases/download/v${VERSION}/unittest.sha256sum.sig"
-tail -n 1 unittest.sha256sum.sig | sha256sum --check
+tail -n 1 remote.sha256sum.sig | sha256sum --check
 ```
 
 ## Alternatives
