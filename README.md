@@ -178,7 +178,7 @@ PASS
 Tests for further usage can be wrapped by function inside shell script:
 
 ```bash
-$ test_command.sh <<EOF
+$ cat <<EOF >test_command.sh
 test_run() {
     command
 }
