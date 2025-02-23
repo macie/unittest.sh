@@ -71,18 +71,21 @@ test:
 	@echo '# Unit tests: $(TEST)' >&2
 	@$(TEST)
 
+.PHONY: build
+build:
+	@echo '# Copy CLI to $(DESTDIR)/$(CLI)' >&2
+	@mkdir -p "$(DESTDIR)"; cp "$(CLI)" "$(DESTDIR)/"
+	@echo '# Update version number to $(CLI_VERSION)' >&2
+	@sed -i 's/^\(readonly UT_VERSION *=\).*/\1"'$(CLI_VERSION)'"/' "$(DESTDIR)/$(CLI)"
+
 .PHONY: install
-install: dist
+install: build
 	@echo '# Install in /usr/local/bin' >&2
 	@mkdir -p '/usr/local/bin'
 	@cp "$(DESTDIR)/$(CLI)" '/usr/local/bin/'
 
 .PHONY: dist
-dist: $(CURL) $(OPENSSL) $(SHA256) $(SIGN)
-	@echo '# Copy CLI to $(DESTDIR)/$(CLI)' >&2
-	@mkdir -p "$(DESTDIR)"; cp "$(CLI)" "$(DESTDIR)/"
-	@echo '# Update version number to $(CLI_VERSION)' >&2
-	@sed -i 's/^\(readonly UT_VERSION *=\).*/\1"'$(CLI_VERSION)'"/' "$(DESTDIR)/$(CLI)"
+dist: build $(CURL) $(OPENSSL) $(SHA256) $(SIGN)
 	@echo '# Create hash' >&2
 	@cd "$(DESTDIR)"; $(SHA256) "$(CLI)" > "$(CLI).sha256sum"
 	@echo '# Sign and embed hash' >&2

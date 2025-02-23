@@ -120,6 +120,7 @@ Use `make` (GNU or BSD):
 - `make` - run checks
 - `make test` - run test
 - `make check` - perform static code analysis
+- `make build` - build `unittest`
 - `make install` - install in `/usr/local/bin`
 - `make dist` - prepare for distributing
 - `make dist-verify` - verify distributed artifacts
